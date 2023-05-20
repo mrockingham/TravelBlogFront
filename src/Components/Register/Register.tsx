@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from '../../config/AxiosConfig';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Card,
   CardHeader,
@@ -22,6 +23,7 @@ import {
 type Props = {};
 
 const Register = (props: Props) => {
+  const navigate = useNavigate();
   const toast = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -54,15 +56,26 @@ const Register = (props: Props) => {
       axios
         .post('/users', formData)
         .then(res => {
+          if (res.status === 201) {
+            toast({
+              title: 'Registration.',
+              description: `User ${res.data.name} created.`,
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+            });
+            navigate('/login');
+          }
+        })
+        .catch(err => {
           toast({
-            title: 'Registration.',
-            description: 'Profile Added.',
-            status: 'success',
+            title: 'Login Error.',
+            description: err.response.data.error,
+            status: 'error',
             duration: 9000,
             isClosable: true,
           });
-        })
-        .catch(err => {
+
           console.log(err.response.data);
         });
     }

@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import storage from '../../config/firebase';
 import BeachBackground from '../../assets/images/beach-background.jpg';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Progress, Image, Center } from '@chakra-ui/react';
+import { useImageStore } from '../../stores/useImageStore';
 
 type Props = {
   name: string;
@@ -10,16 +11,29 @@ type Props = {
   value: any;
   type: string;
   handleInputState: (e: any) => any;
+  handleProgress: (e: any) => any;
+  uploadedImage: any;
 };
 
 const FileUpload = (props: Props) => {
-  const { name, label, value, type, handleInputState, ...rest } = props;
+  const { imageData, getImages, getImage, error } = useImageStore(
+    (state: any) => state
+  );
+  const {
+    name,
+    label,
+    value,
+    type,
+    handleInputState,
+    handleProgress,
+    uploadedImage,
+  } = props;
+
+  console.log('value', value);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState(0);
   const [progressShow, setProgressShow] = useState(false);
-
-  console.log('handleInputState', handleInputState);
 
   const handleUpload = async (e: any) => {
     setProgressShow(true);
@@ -33,18 +47,28 @@ const FileUpload = (props: Props) => {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         );
         setProgress(uploaded);
+        handleProgress(uploaded);
       },
       error => {
-        console.log(error);
+        return;
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(url => {
           handleInputState(url);
+          uploadedImage(url);
           setProgressShow(false);
+          handleProgress(0);
         });
       }
     );
   };
+
+  useEffect(() => {
+    if (progress === 100) {
+      getImages();
+      setProgress(0);
+    }
+  }, [getImages, progress]);
 
   return (
     <Box>
@@ -55,16 +79,32 @@ const FileUpload = (props: Props) => {
           onChange={e => handleInputState(e.currentTarget?.files?.[0] || '')}
         />
       </Box>
-      <Button onClick={() => inputRef.current?.click()}>{label}</Button>
-      {type === 'image' && value && (
-        <img
-          src={typeof value === 'string' ? value : URL.createObjectURL(value)}
-          alt="file 
-            "
-          width="100%"
-        />
-      )}
-      <Button onClick={handleUpload}>upload</Button>
+      <Center>
+        <Button mb={2} onClick={() => inputRef.current?.click()}>
+          {label}
+        </Button>
+      </Center>
+      <Center>
+        {type === 'image' && value && (
+          <Image
+            src={typeof value === 'string' ? value : URL.createObjectURL(value)}
+            alt="file 
+        "
+            boxSize="300px"
+            objectFit="cover"
+            mb={2}
+          />
+        )}
+      </Center>
+      <Center>
+        {value && (
+          <Button mb={2} onClick={handleUpload}>
+            upload
+          </Button>
+        )}
+      </Center>
+      {progress > 0 && <Progress mb={2} value={progress} />}
+      {/* <Button onClick={getImages()}>get images</Button> */}
     </Box>
   );
 };

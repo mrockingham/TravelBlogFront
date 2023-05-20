@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../config/AxiosConfig';
 import { useUsersStore } from '../../stores/useUsersStore';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Card,
   CardHeader,
@@ -24,10 +25,10 @@ import {
 type Props = {};
 
 const Login = (props: Props) => {
+  const navigate = useNavigate();
   const users = useUsersStore((state: any) => state?.data);
   const getUsers = useUsersStore((state: any) => state?.getUsers);
   const loginUser = useUsersStore((state: any) => state?.loginUser);
-  const error = useUsersStore((state: any) => state?.error);
 
   const toast = useToast();
   const [formData, setFormData] = useState({
@@ -36,16 +37,17 @@ const Login = (props: Props) => {
   });
 
   const { email, password } = formData;
-  useEffect(() => {
-    error &&
-      toast({
-        title: 'Login Error.',
-        description: error,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-  }, [error, toast]);
+
+  // useEffect(() => {
+  //   error &&
+  //     toast({
+  //       title: 'Login Error.',
+  //       description: error,
+  //       status: 'error',
+  //       duration: 9000,
+  //       isClosable: true,
+  //     });
+  // }, [error, toast]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prevState => ({
@@ -60,17 +62,28 @@ const Login = (props: Props) => {
     axios
       .post('/users/login', formData)
       .then(res => {
-        console.log(res.data);
+        console.log(res);
         loginUser(res.data);
+        if (res.status === 200) {
+          toast({
+            title: 'Success.',
+            description: `${res.data.name} has logged in`,
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+          });
+          navigate('/');
+        }
+      })
+      .catch(err => {
         toast({
-          title: 'Login.',
-          description: `${res.data.name}  Logged In`,
-          status: 'success',
+          title: 'Login Error.',
+          description: err.response.data,
+          status: 'error',
           duration: 9000,
           isClosable: true,
         });
-      })
-      .catch(err => {
+
         console.log(err.response.data);
       });
   };
@@ -108,6 +121,7 @@ const Login = (props: Props) => {
                     />
                   </Box>
                   <Button type="submit">Submit</Button>
+                  <NavLink to="/Sign-up">Register</NavLink>
                 </Stack>
               </CardBody>
             </FormControl>

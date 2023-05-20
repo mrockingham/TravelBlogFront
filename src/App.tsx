@@ -8,6 +8,8 @@ import LandingPage from './Pages/LandingPage/LandingPage';
 import Login from './Components/Login/Login';
 import Register from './Components/Register/Register';
 import TopBar from './Components/TopBar/TopBar';
+import Album from './Pages/Album';
+import { defaultAppStyles } from './config/defaultAppStyles';
 
 export const App = () => {
   const queryClient = new QueryClient({
@@ -18,7 +20,7 @@ export const App = () => {
     },
   });
 
-  const { data, getStyles, createStyle } = useEditStylesStore(
+  const { styleData, getStyles, createStyle } = useEditStylesStore(
     (state: any) => state
   );
 
@@ -29,13 +31,19 @@ export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <TopBar height={300} navNames={['Home', 'Login', 'Sign-Up']} />
+        <TopBar
+          height={300}
+          navNames={
+            styleData[0]?.topBarNavLinks || defaultAppStyles.topBarNavLinks
+          }
+        />
         <Flex justify={'center'}>
           <Box w="1200px">
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/Login" element={<Login />} />
               <Route path="/Sign-up" element={<Register />} />
+              <Route path="/Album" element={<Album />} />
             </Routes>
           </Box>
         </Flex>

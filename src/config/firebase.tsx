@@ -18,6 +18,4 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app, process.env.REACT_APP_BUCKET_URL);
 const analytics = getAnalytics(app);
 
-console.log('app', app);
-
 export default storage;

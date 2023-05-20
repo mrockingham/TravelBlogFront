@@ -7,7 +7,7 @@ export const useEditStylesStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await axios.get('/editstyle');
-      console.log('response.data', response.data[0]);
+
       set({ isLoading: false, styleData: await response.data });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
@@ -29,7 +29,7 @@ export const useEditStylesStore = create((set, get) => ({
   updateStyles: async (style: any) => {
     try {
       set({ isLoading: true });
-      const response = await axios.put(`/styles/${style._id}`, style, {
+      const response = await axios.put(`/editstyle`, style, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('rexblog-token')}`,
         },
