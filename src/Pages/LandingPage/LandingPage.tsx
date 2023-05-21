@@ -13,16 +13,10 @@ const LandingPage = (props: Props) => {
     getUsers();
   }, [getUsers]);
 
+  console.log('data', data);
+
   return (
     <Box fontSize="xl" w="100%">
-      {data?.length > 0 ? (
-        <Button onClick={() => setIsEdit(!isEdit)}>
-          Edit Mode :{isEdit ? 'on' : 'off'}
-        </Button>
-      ) : (
-        ''
-      )}
-
       <HeroBox height={500} />
     </Box>
   );

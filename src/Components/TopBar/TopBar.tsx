@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useUsersStore } from '../../stores/useUsersStore';
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
 import {
@@ -10,6 +10,7 @@ import {
   DrawerOverlay,
   DrawerContent,
   useDisclosure,
+  Button,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import EditTopBarNav from '../EditComponents/EditTopBarNav';
@@ -19,18 +20,20 @@ type Props = {
   height?: number | string;
   navNames?: string[];
   topBarNavAlign?: string;
+  backgroundColor?: string;
 };
 
 const TopBar = (props: Props) => {
-  const { data, getUsers, error } = useUsersStore((state: any) => state);
+  const { data, getUsers, error, editMode, isEditMode } = useUsersStore(
+    (state: any) => state
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [placement, setPlacement] = React.useState();
+  // const [isEdit, setIsEditMode] = useState(false);
   const { styleData, getStyles, updateStyles, stylesError } =
     useEditStylesStore((state: any) => state);
 
-  useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+  console.log('editMode', editMode);
 
   return (
     <Box borderBottom={'1px'}>
@@ -53,17 +56,25 @@ const TopBar = (props: Props) => {
           ))}
         </Flex>
       </Flex>
-
-      <Flex justifyContent={'center'} alignItems={'center'}>
-        <Box textAlign={'center'} pr="5px">
-          {data ? data?.name : ''}{' '}
-        </Box>
-        <EditIcon
-          onClick={() => {
-            onOpen();
-          }}
-        />
+      <Flex justifyContent={'space-between'} alignItems={'center'}>
+        <Button
+          size="xs"
+          variant="outline"
+          colorScheme="black"
+          onClick={() => isEditMode(!editMode)}
+        >
+          Edit Mode {editMode ? 'on' : 'off'}
+        </Button>
+        <Box mr={'60px'}>{data ? data?.name : ''} </Box>
+        {editMode && (
+          <EditIcon
+            onClick={() => {
+              onOpen();
+            }}
+          />
+        )}
       </Flex>
+
       <Drawer placement={'bottom'} onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent overflow={'auto'} h="300px">

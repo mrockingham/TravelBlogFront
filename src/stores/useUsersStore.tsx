@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import axios from '../config/AxiosConfig';
+import { a } from '@chakra-ui/toast/dist/toast.provider-10178888';
 
 export const useUsersStore = create((set, get) => ({
   data: [],
 
+  editMode: false,
   loginUser: async (user: any) => {
     try {
       set({ data: user });
@@ -40,6 +42,13 @@ export const useUsersStore = create((set, get) => ({
         isLoading: false,
         data: [...state.data, response],
       }));
+    } catch (err: any) {
+      set({ error: err.message, isLoading: false });
+    }
+  },
+  isEditMode: async (isEdit: boolean) => {
+    try {
+      set({ editMode: isEdit });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }

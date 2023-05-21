@@ -24,35 +24,69 @@ type Props = {
 };
 
 const HeroBox = (props: Props) => {
-  const users = useUsersStore((state: any) => state?.data);
+  const { data, getUsers, error, editMode, isEditMode } = useUsersStore(
+    (state: any) => state
+  );
   const [placement, setPlacement] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { styleData } = useEditStylesStore((state: any) => state);
 
+  const customStyles = {
+    background: `linear-gradient(rgba(${
+      styleData[0]?.heroBox?.backGroundImageOpacity ||
+      defaultAppStyles?.heroBox.backgroundImageOpacity
+    }), rgba(${
+      styleData[0]?.heroBox?.backGroundImageOpacity ||
+      defaultAppStyles?.heroBox.backgroundImageOpacity
+    })), url(${
+      styleData[0]?.heroBox?.backgroundImage ||
+      defaultAppStyles?.heroBox.backgroundImage
+    })`,
+    // backgroundBlendMode: 'overlay',
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    // height: `${props.height}px}`,
+  };
+  console.log('styleData', styleData);
   return (
     <Box
       h={props.height}
-      backgroundImage={`url(${
-        styleData[0]?.heroBox?.backgroundImage ||
-        defaultAppStyles?.heroBox.backgroundImage
-      }})`}
+      // backgroundImage={`url(${
+      //   styleData[0]?.heroBox?.backgroundImage ||
+      //   defaultAppStyles?.heroBox.backgroundImage
+      // }})`}
+      sx={customStyles}
       backgroundPosition={'center'}
       backgroundSize={'cover'}
+      // backgroundColor={'rgba(0, 0, 0, 0.5)'}
+      // bg={`linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(${
+      //   styleData[0]?.heroBox?.backgroundImage ||
+      //   defaultAppStyles?.heroBox.backgroundImage
+      // }`}
     >
-      <Flex justifyContent={'center'}>
-        <EditIcon
-          onClick={() => {
-            onOpen();
-          }}
-        />
-      </Flex>
+      {editMode && (
+        <Flex justifyContent={'center'}>
+          <EditIcon
+            onClick={() => {
+              onOpen();
+            }}
+          />
+        </Flex>
+      )}
       <Flex
         justifyContent={
           styleData[0]?.heroBox?.headerAlign ||
           defaultAppStyles?.heroBox.headerAlign
         }
       >
-        <Text fontSize={{ base: '24px', md: '40px', lg: '56px' }}>
+        <Text
+          color={
+            styleData[0]?.heroBox?.headerTextColor ||
+            defaultAppStyles?.heroBox.headerTextColor
+          }
+          fontSize={{ base: '24px', md: '40px', lg: '56px' }}
+          fontWeight={'bold'}
+        >
           {styleData[0]?.heroBox?.headerText ||
             defaultAppStyles?.heroBox.headerText}
         </Text>

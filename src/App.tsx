@@ -31,22 +31,29 @@ export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <TopBar
-          height={300}
-          navNames={
-            styleData[0]?.topBarNavLinks || defaultAppStyles.topBarNavLinks
+        <Box
+          h="100vh"
+          backgroundColor={
+            styleData[0]?.backgroundColor || defaultAppStyles.backgroundColor
           }
-        />
-        <Flex justify={'center'}>
-          <Box w="1200px">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/Login" element={<Login />} />
-              <Route path="/Sign-up" element={<Register />} />
-              <Route path="/Album" element={<Album />} />
-            </Routes>
-          </Box>
-        </Flex>
+        >
+          <TopBar
+            height={300}
+            navNames={
+              styleData[0]?.topBarNavLinks || defaultAppStyles.topBarNavLinks
+            }
+          />
+          <Flex justify={'center'}>
+            <Box w="1200px">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/Login" element={<Login />} />
+                <Route path="/Sign-up" element={<Register />} />
+                <Route path="/Album" element={<Album />} />
+              </Routes>
+            </Box>
+          </Flex>
+        </Box>
       </ChakraProvider>
     </QueryClientProvider>
   );

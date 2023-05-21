@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   DrawerBody,
   DrawerHeader,
@@ -10,9 +10,12 @@ import {
   FormLabel,
   DrawerFooter,
   Button,
+  background,
 } from '@chakra-ui/react';
 
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
+import { ChromePicker } from 'react-color';
+import { defaultAppStyles } from '../../config/defaultAppStyles';
 
 type Props = {
   placement?: string;
@@ -22,25 +25,30 @@ type Props = {
 const EditTopBarNav = (props: Props) => {
   const { styleData, getStyles, updateStyles, stylesError } =
     useEditStylesStore((state: any) => state);
-  const [Link1, setLink1] =
-    React.useState(styleData[0]?.topBarNavLinks[0]) || 'Link1';
-  const [Link2, setLink2] =
-    React.useState(styleData[0]?.topBarNavLinks[1]) || 'Link2';
-  const [Link3, setLink3] =
-    React.useState(styleData[0]?.topBarNavLinks[2]) || 'Link3';
-  const [alignItems, setAlignItems] = React.useState('');
+  const [Link1, setLink1] = useState(
+    styleData[0]?.topBarNavLinks[0] || 'Link1'
+  );
+  const [Link2, setLink2] = useState(
+    styleData[0]?.topBarNavLinks[1] || 'Link2'
+  );
+  const [Link3, setLink3] = useState(
+    styleData[0]?.topBarNavLinks[2] || 'Link3'
+  );
+  const [alignItems, setAlignItems] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState(
+    styleData[0]?.backgroundColor || defaultAppStyles?.backgroundColor
+  );
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     updateStyles({
       topBarNavAlign: alignItems,
       topBarNavLinks: [Link1, Link2, Link3],
+      backgroundColor: backgroundColor,
     });
 
     getStyles();
   };
-  console.log('link1', Link1);
-  console.log('link2', Link2);
-  console.log('link3', Link3);
+
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -97,6 +105,11 @@ const EditTopBarNav = (props: Props) => {
             onChange={e => setLink3(e.target.value)}
             value={Link3}
             placeholder="Nav Link Names"
+          />
+          <Text>Background Color</Text>
+          <ChromePicker
+            color={backgroundColor}
+            onChange={updatedColor => setBackgroundColor(updatedColor.hex)}
           />
         </DrawerBody>
         <DrawerFooter>

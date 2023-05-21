@@ -21,6 +21,7 @@ import {
   ModalFooter,
   Wrap,
   Box,
+  Select,
 } from '@chakra-ui/react';
 
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
@@ -41,11 +42,20 @@ const EditTopBarNav = (props: Props) => {
   const [headerText, setHeaderText] = useState(
     styleData[0]?.heroBox?.headerText || defaultAppStyles.heroBox.headerText
   );
-  const [backgroundImage, setBackgrounImage] = useState('');
+  const [backgroundImage, setBackgrounImage] = useState(
+    styleData[0]?.heroBox?.backgroundImage ||
+      defaultAppStyles?.heroBox.backgroundImage
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [alignItems, setAlignItems] = React.useState('');
+  const [alignItems, setAlignItems] = React.useState(
+    styleData[0]?.heroBox?.headerAlign || defaultAppStyles.heroBox.headerAlign
+  );
   const [selectedImg, setSelectedImg] = useState('');
+  const [imgOpacity, setImgOpacity] = useState(
+    styleData[0]?.heroBox?.backgroundImageOpacity ||
+      defaultAppStyles?.heroBox.backgroundImageOpacity
+  );
   const [isImgSelected, setIsImgSelected] = useState(false);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,21 +64,22 @@ const EditTopBarNav = (props: Props) => {
         headerAlign: alignItems,
         headerText: headerText,
         backgroundImage: backgroundImage,
+        backGroundImageOpacity: `255, 255, 255, 0.${imgOpacity}`,
       },
     });
 
     getStyles();
+  };
+  const handleImgOpacityChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setImgOpacity(event.target.value);
   };
 
   const selectImg = (image: string) => {
     setSelectedImg(image);
     setIsImgSelected(true);
   };
-
-  // useEffect(() => {
-  //   if(isImgSelected){
-
-  //   }
 
   return (
     <div>
@@ -133,6 +144,23 @@ const EditTopBarNav = (props: Props) => {
             objectFit="cover"
             mb={2}
           />
+          <Text>Background Img Opacity</Text>
+          <Select
+            value={imgOpacity}
+            placeholder="Select option"
+            onChange={handleImgOpacityChange}
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3 </option>
+            <option value="4">4 </option>
+            <option value="5">5 </option>
+            <option value="6">6 </option>
+            <option value="7">7 </option>
+            <option value="8">8 </option>
+            <option value="9">9 </option>
+          </Select>
+
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
