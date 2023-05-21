@@ -27,8 +27,7 @@ const HeroBox = (props: Props) => {
   const users = useUsersStore((state: any) => state?.data);
   const [placement, setPlacement] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { styleData, getStyles, updateStyles, stylesError } =
-    useEditStylesStore((state: any) => state);
+  const { styleData } = useEditStylesStore((state: any) => state);
 
   return (
     <Box
