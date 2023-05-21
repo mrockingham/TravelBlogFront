@@ -4,7 +4,7 @@ type Props = {};
 
 export const defaultAppStyles = {
   topBarNavAlign: 'center',
-  topBarNavLinks: ['Link1', 'Link2', 'Link3'],
+  topBarNavLinks: ['Home', 'Login', 'Album'],
   heroBox: {
     headerAlign: 'center',
     headerText: 'Our Blog',
