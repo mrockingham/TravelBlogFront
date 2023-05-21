@@ -121,7 +121,7 @@ const Login = (props: Props) => {
                     />
                   </Box>
                   <Button type="submit">Submit</Button>
-                  <NavLink to="/Sign-up">Register</NavLink>
+                  {/* <NavLink to="/Sign-up">Register</NavLink> */}
                 </Stack>
               </CardBody>
             </FormControl>
