@@ -4,6 +4,7 @@ import Imageview from '../Components/ImageView/Imageview';
 import axios from '../config/AxiosConfig';
 import { Box, Button, Center, Flex, Text, useToast } from '@chakra-ui/react';
 import { useImageStore } from '../stores/useImageStore';
+import { useUsersStore } from '../stores/useUsersStore';
 
 type Props = {};
 
@@ -16,6 +17,15 @@ const Album = (props: Props) => {
   const [imageFile, setImageFile] = useState('');
   const [uploadeImagefile, setUploadImageFile] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  const { data, getUsers, editMode, isEditMode } = useUsersStore(
+    (state: any) => state
+  );
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
+
+  console.log('data', data);
 
   const handleSubmit = async () => {
     const url = imageFile;
@@ -77,27 +87,29 @@ const Album = (props: Props) => {
         </Center>
         <form>
           <div>
-            <input
+            {/* <input
               type="text"
               value={imageName}
               onChange={e => e.target.value && setImageName(e.target.value)}
-            />
+            /> */}
           </div>
           <div>
-            <FileUpload
-              name="image"
-              label="Upload Image"
-              value={imageFile}
-              type="image"
-              handleInputState={value => {
-                setImageFile(value);
-                setImageName(value.name);
-              }}
-              uploadedImage={(value: SetStateAction<string>) =>
-                setUploadImageFile(value)
-              }
-              handleProgress={value => setUploadProgress(value)}
-            />
+            {data?.name && (
+              <FileUpload
+                name="image"
+                label="Upload Image"
+                value={imageFile}
+                type="image"
+                handleInputState={value => {
+                  setImageFile(value);
+                  setImageName(value.name);
+                }}
+                uploadedImage={(value: SetStateAction<string>) =>
+                  setUploadImageFile(value)
+                }
+                handleProgress={value => setUploadProgress(value)}
+              />
+            )}
           </div>
         </form>
 
