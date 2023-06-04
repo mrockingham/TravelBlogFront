@@ -5,6 +5,7 @@ export const useEditStylesStore = create((set, get) => ({
   styleData: [],
   getStyles: async () => {
     try {
+      console.log('is this called');
       set({ isLoading: true });
       const response = await axios.get('/editstyle');
 

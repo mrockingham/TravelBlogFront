@@ -33,8 +33,6 @@ const TopBar = (props: Props) => {
   const { styleData, getStyles, updateStyles, stylesError } =
     useEditStylesStore((state: any) => state);
 
-  console.log('editMode', editMode);
-
   return (
     <Box borderBottom={'1px'}>
       <Flex
@@ -57,14 +55,16 @@ const TopBar = (props: Props) => {
         </Flex>
       </Flex>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
-        <Button
-          size="xs"
-          variant="outline"
-          colorScheme="black"
-          onClick={() => isEditMode(!editMode)}
-        >
-          Edit Mode {editMode ? 'on' : 'off'}
-        </Button>
+        {data.name && (
+          <Button
+            size="xs"
+            variant="outline"
+            colorScheme="black"
+            onClick={() => isEditMode(!editMode)}
+          >
+            Edit Mode {editMode ? 'on' : 'off'}
+          </Button>
+        )}
         <Box mr={'60px'}>{data ? data?.name : ''} </Box>
         {editMode && (
           <EditIcon

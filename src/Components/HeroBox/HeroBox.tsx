@@ -13,7 +13,7 @@ import { useUsersStore } from '../../stores/useUsersStore';
 import FileUpload from '../FileUpload/FileUpload';
 import Imageview from '../ImageView/Imageview';
 import axios from '../../config/AxiosConfig';
-import EditHeroBox from '../EditComponents/EditHeroBox';
+import EditHeroBox from '../EditHeroBox/EditHeroBox';
 import { EditIcon } from '@chakra-ui/icons';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
@@ -29,13 +29,14 @@ const HeroBox = (props: Props) => {
   );
   const [placement, setPlacement] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { styleData } = useEditStylesStore((state: any) => state);
+  const { styleData, getStyles } = useEditStylesStore((state: any) => state);
+  const [pageStyles, setPageStyles] = useState(styleData);
 
   const customStyles = {
-    background: `linear-gradient(rgba(${
+    background: `linear-gradient(rgba(255, 255, 255, 0.${
       styleData[0]?.heroBox?.backGroundImageOpacity ||
       defaultAppStyles?.heroBox.backgroundImageOpacity
-    }), rgba(${
+    }), rgba(255, 255, 255, 0.${
       styleData[0]?.heroBox?.backGroundImageOpacity ||
       defaultAppStyles?.heroBox.backgroundImageOpacity
     })), url(${
@@ -48,6 +49,19 @@ const HeroBox = (props: Props) => {
     // height: `${props.height}px}`,
   };
   console.log('styleData', styleData);
+
+  const fontSize = () => {
+    if (styleData[0]?.heroBox?.bodyTextSize === 'sm') {
+      return { base: '8px', md: '13.33px', lg: '18.67px' };
+    } else if (styleData[0]?.heroBox?.bodyTextSize === 'md') {
+      return { base: '16px', md: '26.67px', lg: '37.33px' };
+    } else if (styleData[0]?.heroBox?.bodyTextSize === 'lg') {
+      return { base: '24px', md: '40px', lg: '56px' };
+    }
+  };
+
+  console.log('syle data', styleData);
+  console.log('fontSize', fontSize());
   return (
     <Box
       h={props.height}
@@ -79,6 +93,7 @@ const HeroBox = (props: Props) => {
           defaultAppStyles?.heroBox.headerAlign
         }
       >
+        {/* Header Text */}
         <Text
           color={
             styleData[0]?.heroBox?.headerTextColor ||
@@ -89,6 +104,27 @@ const HeroBox = (props: Props) => {
         >
           {styleData[0]?.heroBox?.headerText ||
             defaultAppStyles?.heroBox.headerText}
+        </Text>
+        {/* Body Text */}
+      </Flex>
+      <Flex
+        mt={20}
+        // pt={}
+        justifyContent={
+          styleData[0]?.heroBox?.bodyTextAlign ||
+          defaultAppStyles?.heroBox.bodyTextAlign
+        }
+      >
+        <Text
+          color={
+            styleData[0]?.heroBox?.bodyTextColor ||
+            defaultAppStyles?.heroBox.bodyTextColor
+          }
+          fontSize={fontSize() || defaultAppStyles?.heroBox.bodyTextSize}
+          fontWeight={'bold'}
+        >
+          {styleData[0]?.heroBox?.bodyText ||
+            defaultAppStyles?.heroBox.bodyText}
         </Text>
       </Flex>
       <Drawer placement={'bottom'} onClose={onClose} isOpen={isOpen}>

@@ -20,13 +20,12 @@ export const App = () => {
     },
   });
 
-  const { styleData, getStyles, createStyle } = useEditStylesStore(
-    (state: any) => state
-  );
+  const { styleData, getStyles, createStyle, updateStyles } =
+    useEditStylesStore((state: any) => state);
 
   useEffect(() => {
     getStyles();
-  }, [getStyles]);
+  }, [getStyles, updateStyles]);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -2,7 +2,7 @@ import { useState, useEffect, SetStateAction } from 'react';
 import FileUpload from '../Components/FileUpload/FileUpload';
 import Imageview from '../Components/ImageView/Imageview';
 import axios from '../config/AxiosConfig';
-import { Box, Button, Center, Flex, Text, useToast } from '@chakra-ui/react';
+import { Box, Center, Flex, Text, useToast } from '@chakra-ui/react';
 import { useImageStore } from '../stores/useImageStore';
 import { useUsersStore } from '../stores/useUsersStore';
 
@@ -13,6 +13,7 @@ const Album = (props: Props) => {
     (state: any) => state
   );
   const toast = useToast();
+
   const [imageName, setImageName] = useState('');
   const [imageFile, setImageFile] = useState('');
   const [uploadeImagefile, setUploadImageFile] = useState('');
@@ -82,7 +83,7 @@ const Album = (props: Props) => {
       >
         <Center>
           <Text fontSize={{ base: '24px', md: '40px', lg: '56px' }}>
-            All Images
+            Photo Gallery
           </Text>
         </Center>
         <form>
