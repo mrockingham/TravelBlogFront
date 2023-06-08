@@ -10,6 +10,7 @@ import Register from './Components/Register/Register';
 import TopBar from './Components/TopBar/TopBar';
 import Album from './Pages/Album';
 import { defaultAppStyles } from './config/defaultAppStyles';
+import WebFont from 'webfontloader';
 
 export const App = () => {
   const queryClient = new QueryClient({
@@ -26,6 +27,34 @@ export const App = () => {
   useEffect(() => {
     getStyles();
   }, [getStyles, updateStyles]);
+
+  useEffect(() => {
+    WebFont.load({
+      google: {
+        families: [
+          'Droid Sans',
+          'Chilanka',
+          'Roboto',
+          'DM Sans',
+          'Inter',
+          'Space Mono',
+          'Space Grotesk',
+          'Work Sans',
+          'Syne',
+          'Libre Franklin ',
+          'Cormorant',
+          'Fira Sans ',
+          'Eczar',
+          'Alegreya Sans ',
+          'Alegreya ',
+          'Source Sans Pro ',
+          'Source Serif Pro ',
+          'Comic Neue',
+          'Dancing Script',
+        ],
+      },
+    });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

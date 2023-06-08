@@ -17,6 +17,7 @@ import EditHeroBox from '../EditHeroBox/EditHeroBox';
 import { EditIcon } from '@chakra-ui/icons';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
+import parse from 'html-react-parser';
 
 type Props = {
   height?: number | string;
@@ -101,9 +102,19 @@ const HeroBox = (props: Props) => {
           }
           fontSize={{ base: '24px', md: '40px', lg: '56px' }}
           fontWeight={'bold'}
+          style={{
+            fontFamily: `${
+              styleData[0]?.heroBox?.headerFontStyle ||
+              defaultAppStyles?.heroBox.headerFontStyle
+            }`,
+          }}
         >
-          {styleData[0]?.heroBox?.headerText ||
-            defaultAppStyles?.heroBox.headerText}
+          {(parse(
+            styleData[0]?.heroBox?.headerText ||
+              defaultAppStyles?.heroBox.headerText
+          ) as string) ||
+            defaultAppStyles?.heroBox.headerText ||
+            ''}
         </Text>
         {/* Body Text */}
       </Flex>

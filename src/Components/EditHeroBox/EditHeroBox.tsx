@@ -31,6 +31,10 @@ import { useImageStore } from '../../stores/useImageStore';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
 import { ChromePicker } from 'react-color';
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import WebFont from 'webfontloader';
+
 type Props = {
   placement?: string;
   setPlacement?: any;
@@ -43,9 +47,13 @@ const EditTopBarNav = (props: Props) => {
     (state: any) => state
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loadedFonts, setLoadedFonts] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     headerText:
       styleData[0]?.heroBox?.headerText || defaultAppStyles.heroBox.headerText,
+    headerFontStyle:
+      styleData[0]?.heroBox?.headerFontStyle ||
+      defaultAppStyles.heroBox.headerFontStyle,
     bodyText:
       styleData[0]?.heroBox?.bodyText || defaultAppStyles.heroBox.bodyText,
     backgroundImage:
@@ -78,6 +86,7 @@ const EditTopBarNav = (props: Props) => {
       heroBox: {
         headerAlign: formData.alignItems,
         headerText: formData.headerText,
+        headerFontStyle: formData.headerFontStyle,
         headerTextColor: formData.headerTextColor,
         backgroundImage: formData.backgroundImage,
         backGroundImageOpacity: formData.imgOpacity,
@@ -97,6 +106,12 @@ const EditTopBarNav = (props: Props) => {
       [name]: value,
     }));
   };
+  const handleTextChange = (value: React.SetStateAction<string>) => {
+    setFormData(prevState => ({
+      ...prevState,
+      headerText: value,
+    }));
+  };
 
   const handleImgOpacityChange = (e: { target: { value: any } }) => {
     const { value } = e.target;
@@ -113,6 +128,38 @@ const EditTopBarNav = (props: Props) => {
       isImgSelected: true,
     }));
   };
+
+  const TextEditor = () => {
+    const [text, setText] = useState('');
+
+    const handleChange = (value: React.SetStateAction<string>) => {
+      setText(value);
+    };
+
+    return (
+      <div>
+        <ReactQuill value={text} onChange={handleChange} />
+      </div>
+    );
+  };
+
+  const modules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+
+      [{ list: 'ordered' }, { list: 'bullet' }],
+    ],
+  };
+
+  const formats = [
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+  ];
 
   return (
     <div>
@@ -144,9 +191,103 @@ const EditTopBarNav = (props: Props) => {
               <Radio value="flex-end">Right</Radio>
             </Stack>
           </RadioGroup>
-          <Text fontWeight={500}>Header Title</Text>
+          <Box>
+            <Text fontWeight={500}>Header Title</Text>
 
-          <Input
+            <ReactQuill
+              onChange={handleTextChange}
+              value={formData.headerText}
+              modules={modules}
+              formats={formats}
+            />
+          </Box>
+          <Box>
+            <Text>Header Fonts</Text>
+            <Select
+              placeholder="Font Style"
+              value={formData.headerFontStyle}
+              onChange={handleInputChange}
+              name="headerFontStyle"
+              style={{ fontFamily: formData.headerFontStyle }}
+            >
+              <option value="Droid Sans" style={{ fontFamily: 'Droid Sans' }}>
+                Droid Sans
+              </option>
+              <option value="Chilanka" style={{ fontFamily: 'Chilanka' }}>
+                Chilanka
+              </option>
+              <option value="Roboto" style={{ fontFamily: 'Roboto' }}>
+                Roboto
+              </option>
+              <option value="DM Sans" style={{ fontFamily: 'DM Sans' }}>
+                DM Sans
+              </option>
+              <option value="Inter" style={{ fontFamily: 'Inter' }}>
+                Inter
+              </option>
+              <option value="Space Mono" style={{ fontFamily: 'Space Mono' }}>
+                Space Mono
+              </option>
+              <option
+                value="Space Grotesk"
+                style={{ fontFamily: 'Space Grotesk' }}
+              >
+                Space Grotesk
+              </option>
+              <option value="Work Sans" style={{ fontFamily: 'Work Sans' }}>
+                Work Sans
+              </option>
+              <option value="Syne" style={{ fontFamily: 'Syne' }}>
+                Syne
+              </option>
+              <option
+                value="Libre Franklin"
+                style={{ fontFamily: 'Libre Franklin' }}
+              >
+                Libre Franklin
+              </option>
+              <option value="Cormorant" style={{ fontFamily: 'Cormorant' }}>
+                Cormorant
+              </option>
+              <option value="Fira Sans" style={{ fontFamily: 'Fira Sans' }}>
+                Fira Sans
+              </option>
+              <option value="Eczar" style={{ fontFamily: 'Eczar' }}>
+                Eczar
+              </option>
+              <option
+                value="Alegreya Sans"
+                style={{ fontFamily: 'Alegreya Sans' }}
+              >
+                Alegreya Sans
+              </option>
+              <option value="Alegreya" style={{ fontFamily: 'Alegreya' }}>
+                Alegreya
+              </option>
+              <option
+                value="Source Sans Pro"
+                style={{ fontFamily: 'Source Sans Pro' }}
+              >
+                Source Sans Pro
+              </option>
+              <option
+                value="Source Serif Pro"
+                style={{ fontFamily: 'Source Serif Pro' }}
+              >
+                Source Serif Pro
+              </option>
+              <option value="Comic Neue" style={{ fontFamily: 'Comic Neue' }}>
+                Comic Neue
+              </option>
+              <option
+                value="Dancing Script"
+                style={{ fontFamily: 'Dancing Script' }}
+              >
+                Dancing Script
+              </option>
+            </Select>
+          </Box>
+          {/* <Input
             type="text"
             id="value1"
             name="headerText"
@@ -154,7 +295,7 @@ const EditTopBarNav = (props: Props) => {
             value={formData.headerText}
             placeholder="Header Text"
             mb={2}
-          />
+          /> */}
           <Text>Header Title Color</Text>
           <ChromePicker
             color={formData.headerTextColor}
@@ -192,6 +333,7 @@ const EditTopBarNav = (props: Props) => {
               </option>
             ))}
           </Select>
+          <Box></Box>
           <Text>Header Body Text Color</Text>
           <ChromePicker
             color={formData.bodyTextColor}
