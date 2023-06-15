@@ -208,7 +208,12 @@ const EditTopBarNav = (props: Props) => {
               value={formData.headerFontStyle}
               onChange={handleInputChange}
               name="headerFontStyle"
-              style={{ fontFamily: formData.headerFontStyle }}
+              sx={{
+                appearance: 'none',
+                '-webkit-appearance': 'none',
+                '-moz-appearance': 'none',
+                fontFamily: formData.headerFontStyle,
+              }}
             >
               <option value="Droid Sans" style={{ fontFamily: 'Droid Sans' }}>
                 Droid Sans
