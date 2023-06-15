@@ -161,6 +161,12 @@ const EditTopBarNav = (props: Props) => {
     'bullet',
   ];
 
+  const customOptionStyles = {
+    appearance: undefined,
+    WebkitAppearance: undefined,
+    MozAppearance: undefined,
+  };
+
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -209,13 +215,16 @@ const EditTopBarNav = (props: Props) => {
               onChange={handleInputChange}
               name="headerFontStyle"
               sx={{
-                appearance: 'none',
-                '-webkit-appearance': 'none',
-                '-moz-appearance': 'none',
+                appearance: undefined,
+                '-webkit-appearance': undefined,
+                '-moz-appearance': undefined,
                 fontFamily: formData.headerFontStyle,
               }}
             >
-              <option value="Droid Sans" style={{ fontFamily: 'Droid Sans' }}>
+              <option
+                value="Droid Sans"
+                style={{ ...customOptionStyles, fontFamily: 'Droid Sans' }}
+              >
                 Droid Sans
               </option>
               <option value="Chilanka" style={{ fontFamily: 'Chilanka' }}>
