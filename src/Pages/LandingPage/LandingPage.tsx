@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 import { useUsersStore } from '../../stores/useUsersStore';
 import HeroBox from '../../Components/HeroBox/HeroBox';
+import MiddleContentBox from '../../Components/MiddleContentBox/MiddleContentBox';
 
 type Props = {};
 
@@ -18,6 +19,7 @@ const LandingPage = (props: Props) => {
   return (
     <Box fontSize="xl" w="100%">
       <HeroBox height={500} />
+      <MiddleContentBox />
     </Box>
   );
 };

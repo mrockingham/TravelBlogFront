@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+
 import {
   DrawerBody,
   DrawerHeader,
@@ -26,28 +27,23 @@ import {
   Divider,
   Flex,
 } from '@chakra-ui/react';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
 import { useImageStore } from '../../stores/useImageStore';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
 import { ChromePicker } from 'react-color';
-
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import WebFont from 'webfontloader';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 type Props = {
   placement?: string;
   setPlacement?: any;
 };
 
-const EditTopBarNav = (props: Props) => {
+const EditMiddleContentBox = (props: Props) => {
   const { styleData, getStyles, updateStyles, stylesError } =
     useEditStylesStore((state: any) => state);
-  const { imageData, getImages, getImage, error } = useImageStore(
-    (state: any) => state
-  );
+  const { imageData, getImages } = useImageStore((state: any) => state);
 
   const {
     isOpen: isOpenModal1,
@@ -59,35 +55,46 @@ const EditTopBarNav = (props: Props) => {
     onOpen: onOpenModal2,
     onClose: onCloseModal2,
   } = useDisclosure();
+  const {
+    isOpen: isOpenModal3,
+    onOpen: onOpenModal3,
+    onClose: onCloseModal3,
+  } = useDisclosure();
 
   const [formData, setFormData] = useState({
     headerText:
-      styleData[0]?.heroBox?.headerText || defaultAppStyles.heroBox.headerText,
+      styleData[0]?.MiddleContentBox?.headerText ||
+      defaultAppStyles.MiddleContentBox.headerText,
     headerFontStyle:
-      styleData[0]?.heroBox?.headerFontStyle ||
-      defaultAppStyles.heroBox.headerFontStyle,
+      styleData[0]?.MiddleContentBox?.headerFontStyle ||
+      defaultAppStyles.MiddleContentBox.headerFontStyle,
     bodyText:
-      styleData[0]?.heroBox?.bodyText || defaultAppStyles.heroBox.bodyText,
-    backgroundImage:
-      styleData[0]?.heroBox?.backgroundImage ||
-      defaultAppStyles?.heroBox.backgroundImage,
+      styleData[0]?.MiddleContentBox?.bodyText ||
+      defaultAppStyles.MiddleContentBox.bodyText,
+    backgroundImage1:
+      styleData[0]?.MiddleContentBox?.backgroundImage1 ||
+      defaultAppStyles?.MiddleContentBox.backgroundImage1,
+    backgroundImage2:
+      styleData[0]?.MiddleContentBox?.backgroundImage2 ||
+      defaultAppStyles?.MiddleContentBox.backgroundImage2,
     alignItems:
-      styleData[0]?.heroBox?.headerAlign ||
-      defaultAppStyles.heroBox.headerAlign,
-    selectedImg: '',
+      styleData[0]?.MiddleContentBox?.headerAlign ||
+      defaultAppStyles.MiddleContentBox.headerAlign,
+    selectedImg1: '',
+    selectedImg2: '',
     imgOpacity:
       styleData[0]?.heroBox?.backGroundImageOpacity ||
       defaultAppStyles?.heroBox.backgroundImageOpacity,
     isImgSelected: false,
     headerTextColor:
-      styleData[0]?.heroBox?.headerTextColor ||
-      defaultAppStyles?.heroBox.backgroundImage,
+      styleData[0]?.MiddleContentBox?.headerTextColor ||
+      defaultAppStyles?.MiddleContentBox.headerTextColor,
     bodyTextColor:
-      styleData[0]?.heroBox?.bodyTextColor ||
-      defaultAppStyles?.heroBox.bodyTextColor,
+      styleData[0]?.MiddleContentBox?.bodyTextColor ||
+      defaultAppStyles?.MiddleContentBox.bodyTextColor,
     bodyTextSize:
-      styleData[0]?.heroBox?.bodyTextSize ||
-      defaultAppStyles?.heroBox.bodyTextSize,
+      styleData[0]?.MiddleContentBox?.bodyTextSize ||
+      defaultAppStyles?.MiddleContentBox.bodyTextSize,
   });
 
   console.log('formData', formData);
@@ -95,12 +102,13 @@ const EditTopBarNav = (props: Props) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateStyles({
-      heroBox: {
+      MiddleContentBox: {
         headerAlign: formData.alignItems,
         headerText: formData.headerText,
         headerFontStyle: formData.headerFontStyle,
         headerTextColor: formData.headerTextColor,
-        backgroundImage: formData.backgroundImage,
+        backgroundImage1: formData.backgroundImage1,
+        backgroundImage2: formData.backgroundImage2,
         backGroundImageOpacity: formData.imgOpacity,
         bodyText: formData.bodyText,
         bodyTextColor: formData.bodyTextColor,
@@ -118,41 +126,34 @@ const EditTopBarNav = (props: Props) => {
       [name]: value,
     }));
   };
+
   const handleTextChange = (value: React.SetStateAction<string>) => {
     setFormData(prevState => ({
       ...prevState,
       headerText: value,
     }));
   };
-
-  const handleImgOpacityChange = (e: { target: { value: any } }) => {
-    const { value } = e.target;
+  const handleBodyTextChange = (value: React.SetStateAction<string>) => {
     setFormData(prevState => ({
       ...prevState,
-      imgOpacity: value,
+      bodyText: value,
     }));
   };
 
-  const selectImg = (image: string) => {
-    setFormData(prevState => ({
-      ...prevState,
-      selectedImg: image,
-      isImgSelected: true,
-    }));
-  };
-
-  const TextEditor = () => {
-    const [text, setText] = useState('');
-
-    const handleChange = (value: React.SetStateAction<string>) => {
-      setText(value);
-    };
-
-    return (
-      <div>
-        <ReactQuill value={text} onChange={handleChange} />
-      </div>
-    );
+  const selectImg = (image: string, imgNumber: number) => {
+    if (imgNumber === 1) {
+      setFormData(prevState => ({
+        ...prevState,
+        selectedImg1: image,
+        isImgSelected: true,
+      }));
+    } else {
+      setFormData(prevState => ({
+        ...prevState,
+        selectedImg2: image,
+        isImgSelected: true,
+      }));
+    }
   };
 
   const modules = {
@@ -172,18 +173,11 @@ const EditTopBarNav = (props: Props) => {
     'list',
     'bullet',
   ];
-
-  const customOptionStyles = {
-    appearance: undefined,
-    WebkitAppearance: undefined,
-    MozAppearance: undefined,
-  };
-
   return (
     <div>
       <form onSubmit={onSubmit}>
         <DrawerHeader borderBottomWidth="1px">
-          Edit Hero Box
+          Edit Middle Content Box
           {/* <Text>Edit Location</Text>
           <RadioGroup
             defaultValue={props.placement}
@@ -196,7 +190,7 @@ const EditTopBarNav = (props: Props) => {
           </RadioGroup> */}
         </DrawerHeader>
         <DrawerBody>
-          <Text as="b">Align Main Header</Text>
+          <Text as="b">Align Middle Content Header</Text>
           <RadioGroup
             defaultValue={formData.alignItems}
             onChange={value =>
@@ -210,7 +204,7 @@ const EditTopBarNav = (props: Props) => {
             </Stack>
           </RadioGroup>
           <Box>
-            <Text as="b">Header Title</Text>
+            <Text as="b">Middle Content Header Title</Text>
 
             <ReactQuill
               onChange={handleTextChange}
@@ -220,7 +214,7 @@ const EditTopBarNav = (props: Props) => {
             />
           </Box>
           <Box mt={2}>
-            <Text as="b">Header Fonts</Text>
+            <Text as="b">Middle Content Header Fonts</Text>
             <Flex alignItems={'center'}>
               <Text style={{ fontFamily: formData.headerFontStyle }}>
                 Font Style
@@ -355,7 +349,7 @@ const EditTopBarNav = (props: Props) => {
             placeholder="Header Text"
             mb={2}
           /> */}
-          <Text as="b">Header Title Color</Text>
+          <Text as="b">Middle Content Header Title Color</Text>
           <ChromePicker
             color={formData.headerTextColor}
             onChange={updatedColor =>
@@ -365,21 +359,19 @@ const EditTopBarNav = (props: Props) => {
             }
           />
           <Divider mt={8} />
-
           <Text mt={4} as="b">
             Body Text
           </Text>
 
-          <Textarea
-            id="value2"
-            name="bodyText"
-            onChange={handleInputChange}
+          <ReactQuill
+            onChange={handleBodyTextChange}
             value={formData.bodyText}
-            placeholder="Header Text"
-            mb={2}
+            modules={modules}
+            formats={formats}
           />
-
-          <Text as="b">Header Body Text Size</Text>
+          <Box mt={2}>
+            <Text as="b">Middle Content Body Text Size</Text>
+          </Box>
           <Select
             name="bodyTextSize"
             value={formData.bodyTextSize}
@@ -393,7 +385,7 @@ const EditTopBarNav = (props: Props) => {
             ))}
           </Select>
           <Box mt={2}>
-            <Text as="b">Header Body Text Color</Text>
+            <Text as="b">Middle Content Body Text Color</Text>
             <ChromePicker
               color={formData.bodyTextColor}
               onChange={updatedColor =>
@@ -404,7 +396,7 @@ const EditTopBarNav = (props: Props) => {
             />
           </Box>
           <Box mt={3}>
-            <Text as="b">Background Img</Text>
+            <Text as="b">Img 1</Text>
           </Box>
           <Button
             mt={2}
@@ -414,25 +406,15 @@ const EditTopBarNav = (props: Props) => {
               getImages();
             }}
           >
-            Select Img
+            Select Img 1
           </Button>
           <Image
-            src={formData.backgroundImage}
+            src={formData.backgroundImage1}
             alt="file"
             boxSize="300px"
             objectFit="cover"
             mb={2}
           />
-          <Text as="b">Background Img Opacity</Text>
-          <Select value={formData.imgOpacity} onChange={handleImgOpacityChange}>
-            <option value="">Select option</option>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </Select>
-
           <Modal isOpen={isOpenModal2} onClose={onCloseModal2}>
             <ModalOverlay />
             <ModalContent>
@@ -443,7 +425,7 @@ const EditTopBarNav = (props: Props) => {
                   {imageData.map((image: { image: string | undefined }) => (
                     <Box
                       onClick={() => {
-                        selectImg(image?.image || '');
+                        selectImg(image?.image || '', 1);
                         console.log('clicked', image.image);
                       }}
                     >
@@ -453,7 +435,7 @@ const EditTopBarNav = (props: Props) => {
                         src={image.image}
                         alt=""
                         style={
-                          image.image === formData.selectedImg
+                          image.image === formData.selectedImg1
                             ? { border: '4px solid blue' }
                             : { border: 'none' }
                         }
@@ -468,8 +450,8 @@ const EditTopBarNav = (props: Props) => {
                   onClick={() => {
                     handleInputChange({
                       target: {
-                        name: 'backgroundImage',
-                        value: formData.selectedImg,
+                        name: 'backgroundImage1',
+                        value: formData.selectedImg1,
                       },
                     });
                     onCloseModal2();
@@ -484,6 +466,78 @@ const EditTopBarNav = (props: Props) => {
               </ModalFooter>
             </ModalContent>
           </Modal>
+
+          <Box mt={3}>
+            <Text as="b">Img 2</Text>
+          </Box>
+          <Button
+            mt={2}
+            mb={2}
+            onClick={() => {
+              onOpenModal3();
+              getImages();
+            }}
+          >
+            Select Img 2
+          </Button>
+          <Image
+            src={formData.backgroundImage2}
+            alt="file"
+            boxSize="300px"
+            objectFit="cover"
+            mb={2}
+          />
+          <Modal isOpen={isOpenModal3} onClose={onCloseModal3}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Modal Title</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Wrap justify="center">
+                  {imageData.map((image: { image: string | undefined }) => (
+                    <Box
+                      onClick={() => {
+                        selectImg(image?.image || '', 2);
+                        console.log('clicked', image.image);
+                      }}
+                    >
+                      <Image
+                        boxSize="150px"
+                        objectFit="cover"
+                        src={image.image}
+                        alt=""
+                        style={
+                          image.image === formData.selectedImg2
+                            ? { border: '4px solid blue' }
+                            : { border: 'none' }
+                        }
+                      />
+                    </Box>
+                  ))}
+                </Wrap>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button
+                  onClick={() => {
+                    handleInputChange({
+                      target: {
+                        name: 'backgroundImage2',
+                        value: formData.selectedImg2,
+                      },
+                    });
+                    onCloseModal3();
+                  }}
+                  variant="ghost"
+                >
+                  Save Img
+                </Button>
+                <Button colorScheme="blue" mr={3} onClick={onCloseModal3}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </DrawerBody>
         <DrawerFooter>
           <Button type="submit">Save</Button>
@@ -493,4 +547,4 @@ const EditTopBarNav = (props: Props) => {
   );
 };
 
-export default EditTopBarNav;
+export default EditMiddleContentBox;

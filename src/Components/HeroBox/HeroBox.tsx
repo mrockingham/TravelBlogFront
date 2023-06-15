@@ -10,9 +10,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useUsersStore } from '../../stores/useUsersStore';
-import FileUpload from '../FileUpload/FileUpload';
-import Imageview from '../ImageView/Imageview';
-import axios from '../../config/AxiosConfig';
+
 import EditHeroBox from '../EditHeroBox/EditHeroBox';
 import { EditIcon } from '@chakra-ui/icons';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
@@ -116,8 +114,8 @@ const HeroBox = (props: Props) => {
             defaultAppStyles?.heroBox.headerText ||
             ''}
         </Text>
-        {/* Body Text */}
       </Flex>
+      {/* Body Text */}
       <Flex
         mt={20}
         // pt={}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useImageStore } from '../../stores/useImageStore';
+import { useUsersStore } from '../../stores/useUsersStore';
 import {
   Stack,
   Image,
@@ -18,51 +19,113 @@ import {
   ModalCloseButton,
   useDisclosure,
   Button,
+  Box,
+  Input,
 } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
 
 type Props = {};
 
 const Imageview = (props: Props) => {
-  const { imageData, getImages, getImage, error, isLoading } = useImageStore(
+  const { imageData, getImages, addImageDescription, isLoading } =
+    useImageStore((state: any) => state);
+  const { data, getUsers, editMode, isEditMode } = useUsersStore(
     (state: any) => state
   );
   const [image, setImage] = useState<string | undefined>('');
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [discription, setDiscription] = useState('');
+  const [id, setId] = useState('');
+  const {
+    isOpen: isOpenModal1,
+    onOpen: onOpenModal1,
+    onClose: onCloseModal1,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenModal2,
+    onOpen: onOpenModal2,
+    onClose: onCloseModal2,
+  } = useDisclosure();
 
   useEffect(() => {
     getImages();
   }, [getImages]);
 
-  console.log('isLoading', isLoading);
+  console.log('imageData', imageData);
 
   return (
-    <>
+    <Box h={'100%'}>
       <Center>
         {isLoading ? (
           <Spinner size="xl" />
         ) : (
           <Wrap justify="center">
             {imageData.map(
-              (image: { image: string | undefined; name: string }) => (
-                <Skeleton key={image.name} isLoaded={!isLoading}>
-                  <Image
-                    onClick={() => {
-                      setImage(image.image);
-                      onOpen();
-                    }}
-                    // key={image.name}
-                    boxSize="150px"
-                    objectFit="cover"
-                    src={image.image}
-                    alt=""
-                  />
-                </Skeleton>
+              (image: {
+                image: string | undefined;
+                name: string;
+                _id: string;
+                description: string;
+              }) => (
+                <Box>
+                  <Skeleton key={image.name} isLoaded={!isLoading}>
+                    {editMode && (
+                      <EditIcon
+                        onClick={() => {
+                          setId(image._id);
+                          onOpenModal1();
+                        }}
+                      />
+                    )}
+                    <Image
+                      onClick={() => {
+                        setImage(image.image);
+                        onOpenModal2();
+                      }}
+                      // key={image.name}
+                      h={{ base: '200px', md: '400px', lg: '500px' }}
+                      w={{ base: '200px', md: '400px', lg: '500px' }}
+                      objectFit="cover"
+                      src={image.image}
+                      alt=""
+                    />
+                    <Box>{image?.description}</Box>
+                  </Skeleton>
+                </Box>
               )
             )}
           </Wrap>
         )}
+        <Modal isOpen={isOpenModal1} onClose={onCloseModal1}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Input
+                placeholder="discription"
+                onChange={e => setDiscription(e.target.value)}
+              />
+            </ModalBody>
+
+            <ModalFooter>
+              <Button
+                onClick={() => {
+                  addImageDescription(id, discription);
+                  onCloseModal2();
+                }}
+                variant="ghost"
+              >
+                Save Discription
+              </Button>
+              <Button colorScheme="blue" mr={3} onClick={onCloseModal2}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Center>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpenModal2} onClose={onCloseModal2}>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
@@ -76,13 +139,13 @@ const Imageview = (props: Props) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" mr={3} onClick={onCloseModal2}>
               Close
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 

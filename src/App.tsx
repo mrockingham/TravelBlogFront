@@ -60,7 +60,6 @@ export const App = () => {
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
         <Box
-          h="100vh"
           backgroundColor={
             styleData[0]?.backgroundColor || defaultAppStyles.backgroundColor
           }
@@ -72,7 +71,7 @@ export const App = () => {
             }
           />
           <Flex justify={'center'}>
-            <Box w="1200px">
+            <Box h={'100%'} w="1200px">
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/Login" element={<Login />} />

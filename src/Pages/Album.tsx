@@ -75,7 +75,7 @@ const Album = (props: Props) => {
   }, [uploadeImagefile]);
 
   return (
-    <Flex justifyContent={'center'}>
+    <Flex h="100vh" justifyContent={'center'}>
       <Box
       //   textAlign="center"
       //   backgroundImage={`url('https://firebasestorage.googleapis.com/v0/b/blogreixne.appspot.com/o/images%2F1682846871238beachBackground.jpg?alt=media&token=5d971fe7-c8d2-4e00-873d-9e5690a78709')`}
