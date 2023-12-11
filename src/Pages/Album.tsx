@@ -113,8 +113,9 @@ const Album = (props: Props) => {
             )}
           </div>
         </form>
-
-        <Imageview />
+        <Box h="500px">
+          <Imageview />
+        </Box>
       </Box>
     </Flex>
   );

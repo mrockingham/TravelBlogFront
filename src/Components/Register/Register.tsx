@@ -20,31 +20,47 @@ import {
   useToast,
   Button,
 } from '@chakra-ui/react';
-type Props = {};
+import { useForm, Resolver } from 'react-hook-form';
+import { DevTool } from '@hookform/devtools';
 
-const Register = (props: Props) => {
+type FormValues = {
+  name: string;
+  email: string;
+  password: string;
+  verifyPassword: string;
+};
+
+const resolver: Resolver<FormValues> = async (values: FormValues) => {
+  const errors: any = {};
+  if (!values.email) {
+    errors.email = 'Email is required';
+  }
+
+  if (!values.password) {
+    errors.password = 'Password is required';
+  }
+  if (Object.keys(errors).length > 0) {
+    throw errors;
+  }
+  return { values: values, errors: errors };
+};
+
+const Register = () => {
   const navigate = useNavigate();
-  const toast = useToast();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    verifyPassword: '',
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+    resolver: resolver,
   });
+  const toast = useToast();
 
-  const { name, email, password, verifyPassword } = formData;
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prevState => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (password !== verifyPassword) {
+  const onSubmit = handleSubmit(data => {
+    console.log(data);
+    if (data.password !== data.verifyPassword) {
       toast({
         title: 'Registration Error.',
         description: 'Passwords do not match.',
@@ -54,7 +70,7 @@ const Register = (props: Props) => {
       });
     } else {
       axios
-        .post('/users', formData)
+        .post('/users', data)
         .then(res => {
           if (res.status === 201) {
             toast({
@@ -75,11 +91,10 @@ const Register = (props: Props) => {
             duration: 9000,
             isClosable: true,
           });
-
           console.log(err.response.data);
         });
     }
-  };
+  });
 
   return (
     <Center h="100vh">
@@ -96,21 +111,19 @@ const Register = (props: Props) => {
                   <Box>
                     <FormLabel>Name</FormLabel>
                     <Input
+                      {...register('name')}
                       type="text"
                       id="name"
                       name="name"
-                      value={name}
-                      onChange={onChange}
                     />
                   </Box>
                   <Box>
                     <FormLabel>Email Address</FormLabel>
                     <Input
+                      {...register('email')}
                       type="email"
                       id="email"
                       name="email"
-                      value={email}
-                      onChange={onChange}
                     />
                     <FormHelperText>
                       We'll never share your email.
@@ -119,21 +132,19 @@ const Register = (props: Props) => {
                   <Box>
                     <FormLabel>Password</FormLabel>
                     <Input
+                      {...register('password')}
                       type="password"
                       id="password"
                       name="password"
-                      value={password}
-                      onChange={onChange}
                     />
                   </Box>
                   <Box>
                     <FormLabel>Verify Password</FormLabel>
                     <Input
+                      {...register('verifyPassword')}
                       type="password"
                       id="veryPassword"
                       name="verifyPassword"
-                      value={verifyPassword}
-                      onChange={onChange}
                     />
                   </Box>
                   <Button type="submit">Submit</Button>
@@ -143,6 +154,7 @@ const Register = (props: Props) => {
           </form>
         </Card>
       </Box>
+      <DevTool control={control} />
     </Center>
   );
 };

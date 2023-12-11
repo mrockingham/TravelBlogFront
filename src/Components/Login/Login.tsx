@@ -1,66 +1,64 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from '../../config/AxiosConfig';
 import { useUsersStore } from '../../stores/useUsersStore';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Center,
   Box,
   Heading,
   Stack,
   StackDivider,
-  Text,
   FormControl,
   FormLabel,
-  FormErrorMessage,
-  FormHelperText,
   Input,
   useToast,
   Button,
 } from '@chakra-ui/react';
+import { useForm, Resolver, SubmitHandler } from 'react-hook-form';
+import { DevTool } from '@hookform/devtools';
 
-type Props = {};
+type FormValues = {
+  email: string;
+  password: string;
+};
 
-const Login = (props: Props) => {
+const resolver: Resolver<FormValues> = async (values: FormValues) => {
+  const errors: any = {};
+  if (!values.email) {
+    errors.email = 'Email is required';
+  }
+
+  if (!values.password) {
+    errors.password = 'Password is required';
+  }
+  if (Object.keys(errors).length > 0) {
+    throw errors;
+  }
+  return { values: values, errors: errors };
+};
+
+const Login = () => {
   const navigate = useNavigate();
-  const users = useUsersStore((state: any) => state?.data);
-  const getUsers = useUsersStore((state: any) => state?.getUsers);
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+    resolver: resolver,
+  });
+
   const loginUser = useUsersStore((state: any) => state?.loginUser);
 
   const toast = useToast();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
 
-  const { email, password } = formData;
-
-  // useEffect(() => {
-  //   error &&
-  //     toast({
-  //       title: 'Login Error.',
-  //       description: error,
-  //       status: 'error',
-  //       duration: 9000,
-  //       isClosable: true,
-  //     });
-  // }, [error, toast]);
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prevState => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = handleSubmit(data => {
     axios
-      .post('/users/login', formData)
+      .post('/users/login', data)
       .then(res => {
         console.log(res);
         loginUser(res.data);
@@ -86,7 +84,7 @@ const Login = (props: Props) => {
 
         console.log(err.response.data);
       });
-  };
+  });
 
   return (
     <Center h="100vh" w="100%">
@@ -103,21 +101,19 @@ const Login = (props: Props) => {
                   <Box>
                     <FormLabel>Email Address</FormLabel>
                     <Input
+                      {...register('email')}
                       type="email"
                       id="email"
                       name="email"
-                      value={email}
-                      onChange={onChange}
                     />
                   </Box>
                   <Box>
                     <FormLabel>Password</FormLabel>
                     <Input
+                      {...register('password')}
                       type="password"
                       id="password"
                       name="password"
-                      value={password}
-                      onChange={onChange}
                     />
                   </Box>
                   <Button type="submit">Submit</Button>
@@ -128,6 +124,7 @@ const Login = (props: Props) => {
           </form>
         </Card>
       </Box>
+      <DevTool control={control} />
     </Center>
   );
 };

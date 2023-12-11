@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   DrawerBody,
   DrawerHeader,
@@ -12,38 +12,46 @@ import {
   Button,
   background,
 } from '@chakra-ui/react';
-
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
 import { ChromePicker } from 'react-color';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
+import { useForm } from 'react-hook-form';
 
 type Props = {
   placement?: string;
   setPlacement?: any;
 };
 
+type FormData = {
+  link1: string;
+  link2: string;
+  link3: string;
+  alignItems: string;
+  backgroundColor: string;
+};
+
 const EditTopBarNav = (props: Props) => {
   const { styleData, getStyles, updateStyles, stylesError } =
     useEditStylesStore((state: any) => state);
-  const [Link1, setLink1] = useState(
-    styleData[0]?.topBarNavLinks[0] || 'Link1'
-  );
-  const [Link2, setLink2] = useState(
-    styleData[0]?.topBarNavLinks[1] || 'Link2'
-  );
-  const [Link3, setLink3] = useState(
-    styleData[0]?.topBarNavLinks[2] || 'Link3'
-  );
-  const [alignItems, setAlignItems] = useState('');
-  const [backgroundColor, setBackgroundColor] = useState(
-    styleData[0]?.backgroundColor || defaultAppStyles?.backgroundColor
-  );
+  const { register, handleSubmit, setValue, getValues } = useForm<FormData>({
+    defaultValues: {
+      link1: styleData[0]?.topBarNavLinks[0] || 'Link1',
+      link2: styleData[0]?.topBarNavLinks[1] || 'Link2',
+      link3: styleData[0]?.topBarNavLinks[2] || 'Link3',
+      alignItems: '',
+      backgroundColor:
+        styleData[0]?.backgroundColor || defaultAppStyles?.backgroundColor,
+    },
+  });
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const values = getValues();
+
+  console.log('the values', values);
+  const onSubmit = (data: FormData) => {
     updateStyles({
-      topBarNavAlign: alignItems,
-      topBarNavLinks: [Link1, Link2, Link3],
-      backgroundColor: backgroundColor,
+      topBarNavAlign: data.alignItems,
+      topBarNavLinks: [data.link1, data.link2, data.link3],
+      backgroundColor: data.backgroundColor,
     });
 
     getStyles();
@@ -51,7 +59,7 @@ const EditTopBarNav = (props: Props) => {
 
   return (
     <div>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <DrawerHeader borderBottomWidth="1px">Edit Top Bar</DrawerHeader>
         <DrawerBody>
           <Text>Edit Location</Text>
@@ -68,7 +76,7 @@ const EditTopBarNav = (props: Props) => {
           <Text>Align Nav Link</Text>
           <RadioGroup
             defaultValue={styleData[0]?.topBarNavAlign}
-            onChange={setAlignItems}
+            onChange={value => setValue('alignItems', value)}
           >
             <Stack direction="row" mb="4">
               <Radio value="flex-start">Left</Radio>
@@ -80,36 +88,32 @@ const EditTopBarNav = (props: Props) => {
           <FormLabel>Link 1</FormLabel>
           <Input
             type="text"
-            id="value1"
-            name="value1"
-            onChange={e => setLink1(e.target.value)}
-            value={Link1}
+            id="link1"
+            {...register('link1')}
             placeholder="Nav Link Names"
             mb={2}
           />
           <FormLabel>Link 2</FormLabel>
           <Input
             type="text"
-            id="value1"
-            name="value1"
-            onChange={e => setLink2(e.target.value)}
-            value={Link2}
+            id="link2"
+            {...register('link2')}
             placeholder="Nav Link Names"
             mb={2}
           />
           <FormLabel>Link 3</FormLabel>
           <Input
             type="text"
-            id="value1"
-            name="value1"
-            onChange={e => setLink3(e.target.value)}
-            value={Link3}
+            id="link3"
+            {...register('link3')}
             placeholder="Nav Link Names"
           />
           <Text>Background Color</Text>
           <ChromePicker
-            color={backgroundColor}
-            onChange={updatedColor => setBackgroundColor(updatedColor.hex)}
+            color={values.backgroundColor || styleData[0]?.backgroundColor}
+            onChange={updatedColor =>
+              setValue('backgroundColor', updatedColor.hex)
+            }
           />
         </DrawerBody>
         <DrawerFooter>

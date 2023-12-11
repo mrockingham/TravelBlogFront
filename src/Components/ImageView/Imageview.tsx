@@ -54,12 +54,12 @@ const Imageview = (props: Props) => {
   console.log('imageData', imageData);
 
   return (
-    <Box h={'100%'}>
+    <Box h="500px">
       <Center>
         {isLoading ? (
           <Spinner size="xl" />
         ) : (
-          <Wrap justify="center">
+          <Wrap overflowY="auto" flexWrap="wrap" h="600px" justify="center">
             {imageData.map(
               (image: {
                 image: string | undefined;

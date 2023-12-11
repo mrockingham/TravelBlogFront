@@ -95,8 +95,15 @@ const MiddleContentBox = () => {
           }
           fontWeight={'bold'}
         >
-          {styleData[0]?.MiddleContentBox?.bodyText ||
-            defaultAppStyles?.MiddleContentBox.bodyText}
+          {
+            parse(
+              styleData[0]?.MiddleContentBox?.bodyText ||
+                defaultAppStyles?.MiddleContentBox.bodyText
+            ) as string
+          }
+          {/* {
+          styleData[0]?.MiddleContentBox?.bodyText ||
+            defaultAppStyles?.MiddleContentBox.bodyText} */}
         </Text>
       </Flex>
 
