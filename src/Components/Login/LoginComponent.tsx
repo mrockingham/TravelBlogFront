@@ -63,14 +63,19 @@ const LoginComponent = () => {
       navigate('/');
     } catch (err) {
       console.log(err);
+      toast({
+        title: 'Something Went Wrong',
+        description: `${err}`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   });
 
   const getUser = () => {
     getAccount();
   };
-
-  console.log('time data', new Date(1703804400 * 1000));
 
   return (
     <Center h="100vh" w="100%">
@@ -103,7 +108,7 @@ const LoginComponent = () => {
                     />
                   </Box>
                   <Button type="submit">Submit</Button>
-                  <Button onClick={getUser}>getUser</Button>
+
                   <Link to="/Signup">Register</Link>
                 </Stack>
               </CardBody>

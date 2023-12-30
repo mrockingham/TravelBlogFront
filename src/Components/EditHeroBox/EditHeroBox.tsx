@@ -25,6 +25,7 @@ import {
   Textarea,
   Divider,
   Flex,
+  useToast,
 } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 
@@ -47,11 +48,12 @@ const EditHeroBox = (props: Props) => {
     heroBoxBodyData,
     updateHeroBoxStyles,
     updateHeroBoxBodyStyles,
-    getHeroBox,
-    getHeroBoxBody,
+    getHeroBoxStyles,
+    getHeroBoxBodyStyles,
   } = useEditStylesStore((state: any) => state);
   const { getImages } = useImageStore((state: any) => state);
   const [photos, setPhotos] = useState([]);
+  const toast = useToast();
 
   useEffect(() => {
     const getAlbumPhotos = async () => {
@@ -110,29 +112,48 @@ const EditHeroBox = (props: Props) => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await updateHeroBoxStyles({
-      id: '658f29098268531b0292',
-      data: {
-        headerAlign: formData.headerAlign,
-        headerText: formData.headerText,
-        headerFontStyle: formData.headerFontStyle,
-        headerTextColor: formData.headerTextColor,
-        backgroundImage: formData.backgroundImage,
-        backgroundImageOpacity: formData.backgroundImageOpacity,
-      },
-    });
+    try {
+      await updateHeroBoxStyles({
+        id: '65907877bca04778a6f7',
+        data: {
+          headerAlign: formData.headerAlign,
+          headerText: formData.headerText,
+          headerFontStyle: formData.headerFontStyle,
+          headerTextColor: formData.headerTextColor,
+          backgroundImage: formData.backgroundImage,
+          backgroundImageOpacity: formData.backgroundImageOpacity,
+        },
+      });
 
-    await updateHeroBoxBodyStyles({
-      id: '658f3baeefca92d22c07',
-      data: {
-        bodyText: formData.bodyText,
-        bodyTextColor: formData.bodyTextColor,
-        bodyTextSize: formData.bodyTextSize,
-      },
-    });
+      console.log('herobox data', heroBoxBodyData);
 
-    await getHeroBox();
-    await getHeroBoxBody();
+      await updateHeroBoxBodyStyles({
+        id: '6590796b4a665a0eee97',
+        data: {
+          bodyText: formData.bodyText,
+          bodyTextColor: formData.bodyTextColor,
+          bodyTextSize: formData.bodyTextSize,
+        },
+      });
+      toast({
+        title: 'Styles',
+        description: `Styles updated!`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+
+      await getHeroBoxStyles();
+      await getHeroBoxBodyStyles();
+    } catch (err) {
+      toast({
+        title: 'Something Went Wrong',
+        description: `${err}`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {

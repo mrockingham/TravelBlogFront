@@ -25,7 +25,7 @@ export const useEditStylesStore = create((set, get) => ({
       set({ isLoading: true });
       const response = await getStyles();
 
-      set({ isLoading: false, styleData: await response?.documents[0] });
+      set({ isLoading: false, styleData: response?.documents[0] });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
@@ -34,7 +34,7 @@ export const useEditStylesStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await updateStylesDB(id, data);
-      set({ isLoading: false, styleData: await response });
+      set({ isLoading: false, styleData: response });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
@@ -45,19 +45,16 @@ export const useEditStylesStore = create((set, get) => ({
       set({ isLoading: true });
       const response = await getHeroBox();
 
-      set({ isLoading: false, heroBoxData: await response?.documents[0] });
+      set({ isLoading: false, heroBoxData: response?.documents[0] });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
   },
   updateHeroBoxStyles: async (id: string, data: any) => {
-    // console.log('updatehero info id', id);
-    // console.log('updatehero info data', data);
-
     try {
       set({ isLoading: true });
       const response = await updateHeroBoxDB(id);
-      set({ isLoading: false, heroBoxData: await response });
+      set({ isLoading: false, heroBoxData: response });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
@@ -67,7 +64,7 @@ export const useEditStylesStore = create((set, get) => ({
       set({ isLoading: true });
       const response = await getHeroBoxBody();
 
-      set({ isLoading: false, heroBoxBodyData: await response?.documents[0] });
+      set({ isLoading: false, heroBoxBodyData: response?.documents[0] });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
@@ -76,7 +73,7 @@ export const useEditStylesStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await updateHeroBoxBodyDB(id);
-      set({ isLoading: false, heroBoxBodyData: await response });
+      set({ isLoading: false, heroBoxBodyData: response });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
@@ -101,7 +98,7 @@ export const useEditStylesStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await updateMiddleContentBoxDB(id);
-      set({ isLoading: false, middleContentBoxData: await response });
+      set({ isLoading: false, middleContentBoxData: response });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }
@@ -126,7 +123,7 @@ export const useEditStylesStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await updateMiddleContentBoxBodyDB(id);
-      set({ isLoading: false, middleContentBoxBodyData: await response });
+      set({ isLoading: false, middleContentBoxBodyData: response });
     } catch (err: any) {
       set({ error: err.message, isLoading: false });
     }

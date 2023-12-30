@@ -38,7 +38,7 @@ const TopBar = (props: Props) => {
   const { styleData } = useEditStylesStore((state: any) => state);
 
   useEffect(() => {
-    if (!data.name) {
+    if (!data?.name) {
       getUsers();
     }
   }, []);

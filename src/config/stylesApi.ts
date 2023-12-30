@@ -14,7 +14,7 @@ export const updateStylesDB = async (id: string, data: any) => {
 
         return updateStyles
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 
@@ -28,7 +28,7 @@ export const getStyles = async () => {
 
         return styles
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 
@@ -46,7 +46,7 @@ export const updateHeroBoxDB = async (data: any) => {
 
         return updateHeroBox
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 
@@ -60,7 +60,7 @@ export const getHeroBox = async () => {
 
         return heroBox
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 export const updateHeroBoxBodyDB = async (data: any) => {
@@ -75,7 +75,7 @@ export const updateHeroBoxBodyDB = async (data: any) => {
 
         return updateHeroBoxBody
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 
@@ -89,7 +89,7 @@ export const getHeroBoxBody = async () => {
 
         return heroBoxBody
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 export const updateMiddleContentBoxDB = async (data: any) => {
@@ -106,7 +106,7 @@ export const updateMiddleContentBoxDB = async (data: any) => {
 
         return updateMiddleContentBox
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 
@@ -120,7 +120,7 @@ export const getMiddleContentBox = async () => {
 
         return middleContentBox
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 export const updateMiddleContentBoxBodyDB = async (data: any) => {
@@ -135,7 +135,7 @@ export const updateMiddleContentBoxBodyDB = async (data: any) => {
 
         return updateMiddleContentBoxBody
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 }
 
@@ -148,6 +148,6 @@ export const getMiddlecontentBodyBox = async () => {
 
         return middleContentBodyBox
     } catch (err) {
-        console.log(err)
+        throw new Error(err)
     }
 } 

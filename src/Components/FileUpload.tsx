@@ -68,9 +68,9 @@ const FileUpload = () => {
         } catch (err) {
           console.log(err);
           toast({
-            title: 'Sucess',
-            description: 'Image has been uploaded.',
-            status: 'success',
+            title: 'Something Went Wrong',
+            description: err,
+            status: 'error',
             duration: 9000,
             isClosable: true,
           });

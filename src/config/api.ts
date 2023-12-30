@@ -22,8 +22,7 @@ export const createUserAccount = async (user: INewUser) => {
 
         return newUser;
     } catch (error) {
-        console.log('what is the error', error);
-        return error;
+        throw new Error(error)
     }
 };
 
@@ -58,10 +57,8 @@ export const SignInAccount = async (user: {
         // navigate('/');
         return session;
     } catch (error) {
-        // getError(error)
-        console.log(error);
-        console.log('error creating email session', error);
-        throw new Error('Failed to sign in. Please check your email and password.');
+
+        throw new Error(error);
     }
 };
 

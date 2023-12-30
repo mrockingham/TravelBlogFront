@@ -26,6 +26,7 @@ import {
   Textarea,
   Divider,
   Flex,
+  useToast,
 } from '@chakra-ui/react';
 
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
@@ -45,11 +46,12 @@ const EditMiddleContentBox = (props: Props) => {
     middleContentBoxBodyData,
     updateMiddleContentBoxStyles,
     updateMiddleContentBoxBodyStyles,
-    getMiddleContentBox,
-    getMiddlecontentBodyBox,
+    getMiddleContentBoxStyles,
+    getMiddleContentBoxBodyStyles,
   } = useEditStylesStore((state: any) => state);
   const { getImages } = useImageStore((state: any) => state);
   const [photos, setPhotos] = useState([]);
+  const toast = useToast();
 
   useEffect(() => {
     const getAlbumPhotos = async () => {
@@ -118,30 +120,48 @@ const EditMiddleContentBox = (props: Props) => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await updateMiddleContentBoxStyles({
-      id: '658f5a697ee640d92021',
-      data: {
-        headerAlign: formData.headerAlign,
-        headerText: formData.headerText,
-        headerFontStyle: formData.headerFontStyle,
-        headerTextColor: formData.headerTextColor,
-        backgroundImage1: formData.backgroundImage1,
-        backgroundImage2: formData.backgroundImage2,
-        backgroundImageOpacity: formData.backgroundImageOpacity,
-      },
-    });
-    updateMiddleContentBoxBodyStyles({
-      id: '658f5ab4b339c2173b17',
-      data: {
-        bodyText: formData.bodyText,
-        bodyTextColor: formData.bodyTextColor,
-        bodyTextSize: formData.bodyTextSize,
-        bodySpaceTop: 0,
-      },
-    });
 
-    getMiddleContentBox();
-    getMiddlecontentBodyBox();
+    try {
+      await updateMiddleContentBoxStyles({
+        id: '65907ae308858c1427e9',
+        data: {
+          headerAlign: formData.headerAlign,
+          headerText: formData.headerText,
+          headerFontStyle: formData.headerFontStyle,
+          headerTextColor: formData.headerTextColor,
+          backgroundImage1: formData.backgroundImage1,
+          backgroundImage2: formData.backgroundImage2,
+          backgroundImageOpacity: formData.backgroundImageOpacity,
+        },
+      });
+      updateMiddleContentBoxBodyStyles({
+        id: '65907ba3a40916335463',
+        data: {
+          bodyText: formData.bodyText,
+          bodyTextColor: formData.bodyTextColor,
+          bodyTextSize: formData.bodyTextSize,
+          bodySpaceTop: 0,
+        },
+      });
+      toast({
+        title: 'Styles',
+        description: `Styles updated!`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+
+      await getMiddleContentBoxStyles();
+      await getMiddleContentBoxBodyStyles();
+    } catch (err) {
+      toast({
+        title: 'Something Went Wrong',
+        description: `${err}`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {

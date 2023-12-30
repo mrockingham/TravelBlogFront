@@ -63,9 +63,18 @@ const RegisterComponent = () => {
       if (regPin === process.env.REACT_APP_REGISTER) {
         await createUserAccount(data);
         navigate('/');
+      } else {
+        throw new Error('Invalid pin');
       }
     } catch (err) {
       console.log(err);
+      toast({
+        title: 'Something Went Wrong',
+        description: `${err}`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   });
 
