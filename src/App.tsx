@@ -3,7 +3,7 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Box, ChakraProvider, Flex, theme } from '@chakra-ui/react';
 import { useEditStylesStore } from './stores/useEditStylesStore';
 import WebFont from 'webfontloader';
-import LandingPage from './Pages/landingPage/LandingPage';
+import LandingPage from './Pages/LandingPage/LandingPage';
 import Register from './Pages/Register/Register';
 import Login from './Pages/Login/Login';
 import TopBar from './Components/TopBar/TopBar';
