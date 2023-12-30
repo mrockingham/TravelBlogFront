@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import parse from 'html-react-parser';
 import {
   Box,
   Button,
@@ -9,13 +10,13 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useUsersStore } from '../../stores/useUsersStore';
 
-import EditHeroBox from '../EditHeroBox/EditHeroBox';
+// import EditHeroBox from '../EditHeroBox/EditHeroBox';
 import { EditIcon } from '@chakra-ui/icons';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
-import parse from 'html-react-parser';
+import { useUserStore } from '../../stores/useUserStore';
+import EditHeroBox from '../EditHeroBox/EditHeroBox';
 
 type Props = {
   height?: number | string;
@@ -23,59 +24,103 @@ type Props = {
 };
 
 const HeroBox = (props: Props) => {
-  const { data, getUsers, error, editMode, isEditMode } = useUsersStore(
+  const { editMode } = useUserStore((state: any) => state);
+  const { heroBoxData, heroBoxBodyData } = useEditStylesStore(
     (state: any) => state
   );
-  const [placement, setPlacement] = useState();
+
+  useEffect(() => {
+    setAllStyles({
+      backgroundImageOpacity: heroBoxData?.backGroundImageOpacity
+        ? heroBoxData?.backGroundImageOpacity
+        : defaultAppStyles?.heroBox.backgroundImageOpacity,
+      backgroundImage: heroBoxData?.backgroundImage
+        ? heroBoxData?.backgroundImage
+        : defaultAppStyles?.heroBox.backgroundImage,
+      bodyTextSize: heroBoxData?.bodyTextSize
+        ? heroBoxData?.bodyTextSize
+        : defaultAppStyles?.heroBoxBody.bodyTextSize,
+      headerAlign: heroBoxData?.headerAlign
+        ? heroBoxData?.headerAlign
+        : defaultAppStyles?.heroBox.headerAlign,
+      headerTextColor: heroBoxData?.headerTextColor
+        ? heroBoxData?.headerTextColor
+        : defaultAppStyles?.heroBox.headerTextColor,
+      headerFontStyle: heroBoxData?.headerFontStyle
+        ? heroBoxData?.headerFontStyle
+        : defaultAppStyles?.heroBox.headerFontStyle,
+      headerText: heroBoxData?.headerText
+        ? heroBoxData?.headerText
+        : defaultAppStyles?.heroBox.headerText,
+      bodyTextAlign: heroBoxBodyData?.bodyTextAlign
+        ? heroBoxBodyData?.bodyTextAlign
+        : defaultAppStyles?.heroBoxBody.bodyTextAlign,
+      bodyTextColor: heroBoxBodyData?.bodyTextColor
+        ? heroBoxBodyData?.bodyTextColor
+        : defaultAppStyles?.heroBoxBody.bodyTextColor,
+      bodyText: heroBoxBodyData?.bodyText
+        ? heroBoxBodyData?.bodyText
+        : defaultAppStyles?.heroBoxBody.bodyText,
+    });
+  }, [heroBoxData, heroBoxBodyData]);
+
+  const [allStyles, setAllStyles] = useState({
+    backgroundImageOpacity: heroBoxData?.backgroundImageOpacity
+      ? heroBoxData?.backgroundImageOpacity
+      : defaultAppStyles?.heroBox.backgroundImageOpacity,
+    backgroundImage: heroBoxData?.backgroundImage
+      ? heroBoxData?.backgroundImage
+      : defaultAppStyles?.heroBox.backgroundImage,
+    bodyTextSize: heroBoxData?.bodyTextSize
+      ? heroBoxData?.bodyTextSize
+      : defaultAppStyles?.heroBoxBody.bodyTextSize,
+    headerAlign: heroBoxData?.headerAlign
+      ? heroBoxData?.headerAlign
+      : defaultAppStyles?.heroBox.headerAlign,
+    headerTextColor: heroBoxData?.headerTextColor
+      ? heroBoxData?.headerTextColor
+      : defaultAppStyles?.heroBox.headerTextColor,
+    headerFontStyle: heroBoxData?.headerFontStyle
+      ? heroBoxData?.headerFontStyle
+      : defaultAppStyles?.heroBox.headerFontStyle,
+    headerText: heroBoxData?.headerText
+      ? heroBoxData?.headerText
+      : defaultAppStyles?.heroBox.headerText,
+    bodyTextAlign: heroBoxBodyData?.bodyTextAlign
+      ? heroBoxBodyData?.bodyTextAlign
+      : defaultAppStyles?.heroBoxBody.bodyTextAlign,
+    bodyTextColor: heroBoxBodyData?.bodyTextColor
+      ? heroBoxBodyData?.bodyTextColor
+      : defaultAppStyles?.heroBoxBody.bodyTextColor,
+    bodyText: heroBoxBodyData?.bodyText
+      ? heroBoxBodyData?.bodyText
+      : defaultAppStyles?.heroBoxBody.bodyText,
+  });
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { styleData, getStyles } = useEditStylesStore((state: any) => state);
-  const [pageStyles, setPageStyles] = useState(styleData);
 
   const customStyles = {
-    background: `linear-gradient(rgba(255, 255, 255, 0.${
-      styleData[0]?.heroBox?.backGroundImageOpacity ||
-      defaultAppStyles?.heroBox.backgroundImageOpacity
-    }), rgba(255, 255, 255, 0.${
-      styleData[0]?.heroBox?.backGroundImageOpacity ||
-      defaultAppStyles?.heroBox.backgroundImageOpacity
-    })), url(${
-      styleData[0]?.heroBox?.backgroundImage ||
-      defaultAppStyles?.heroBox.backgroundImage
-    })`,
-    // backgroundBlendMode: 'overlay',
+    background: `linear-gradient(rgba(255, 255, 255, 0.${allStyles?.backgroundImageOpacity}), rgba(255, 255, 255, 0.${allStyles?.backgroundImageOpacity})), url(${allStyles?.backgroundImage})`,
+
     backgroundPosition: 'center',
     backgroundSize: 'cover',
-    // height: `${props.height}px}`,
   };
-  console.log('styleData', styleData);
 
   const fontSize = () => {
-    if (styleData[0]?.heroBox?.bodyTextSize === 'sm') {
+    if (allStyles?.bodyTextSize === 'sm') {
       return { base: '8px', md: '13.33px', lg: '18.67px' };
-    } else if (styleData[0]?.heroBox?.bodyTextSize === 'md') {
+    } else if (allStyles?.bodyTextSize === 'md') {
       return { base: '16px', md: '26.67px', lg: '37.33px' };
-    } else if (styleData[0]?.heroBox?.bodyTextSize === 'lg') {
+    } else if (allStyles?.bodyTextSize === 'lg') {
       return { base: '24px', md: '40px', lg: '56px' };
     }
   };
 
-  console.log('syle data', styleData);
-  console.log('fontSize', fontSize());
   return (
     <Box
       h={props.height}
-      // backgroundImage={`url(${
-      //   styleData[0]?.heroBox?.backgroundImage ||
-      //   defaultAppStyles?.heroBox.backgroundImage
-      // }})`}
       sx={customStyles}
       backgroundPosition={'center'}
       backgroundSize={'cover'}
-      // backgroundColor={'rgba(0, 0, 0, 0.5)'}
-      // bg={`linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(${
-      //   styleData[0]?.heroBox?.backgroundImage ||
-      //   defaultAppStyles?.heroBox.backgroundImage
-      // }`}
     >
       {editMode && (
         <Flex justifyContent={'center'}>
@@ -86,31 +131,17 @@ const HeroBox = (props: Props) => {
           />
         </Flex>
       )}
-      <Flex
-        justifyContent={
-          styleData[0]?.heroBox?.headerAlign ||
-          defaultAppStyles?.heroBox.headerAlign
-        }
-      >
+      <Flex justifyContent={allStyles?.headerAlign}>
         {/* Header Text */}
         <Text
-          color={
-            styleData[0]?.heroBox?.headerTextColor ||
-            defaultAppStyles?.heroBox.headerTextColor
-          }
+          color={allStyles?.headerTextColor}
           fontSize={{ base: '24px', md: '40px', lg: '56px' }}
           fontWeight={'bold'}
           style={{
-            fontFamily: `${
-              styleData[0]?.heroBox?.headerFontStyle ||
-              defaultAppStyles?.heroBox.headerFontStyle
-            }`,
+            fontFamily: `${allStyles?.headerFontStyle}`,
           }}
         >
-          {(parse(
-            styleData[0]?.heroBox?.headerText ||
-              defaultAppStyles?.heroBox.headerText
-          ) as string) ||
+          {(parse(allStyles?.headerText) as string) ||
             defaultAppStyles?.heroBox.headerText ||
             ''}
         </Text>
@@ -119,27 +150,20 @@ const HeroBox = (props: Props) => {
       <Flex
         mt={20}
         // pt={}
-        justifyContent={
-          styleData[0]?.heroBox?.bodyTextAlign ||
-          defaultAppStyles?.heroBox.bodyTextAlign
-        }
+        justifyContent={allStyles?.bodyTextAlign}
       >
         <Text
-          color={
-            styleData[0]?.heroBox?.bodyTextColor ||
-            defaultAppStyles?.heroBox.bodyTextColor
-          }
-          fontSize={fontSize() || defaultAppStyles?.heroBox.bodyTextSize}
+          color={allStyles?.bodyTextColor}
+          fontSize={fontSize() || defaultAppStyles?.heroBoxBody.bodyTextSize}
           fontWeight={'bold'}
         >
-          {styleData[0]?.heroBox?.bodyText ||
-            defaultAppStyles?.heroBox.bodyText}
+          {allStyles?.bodyText}
         </Text>
       </Flex>
       <Drawer placement={'bottom'} onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent overflow={'auto'} h="300px">
-          <EditHeroBox placement={placement} setPlacement={setPlacement} />
+          <EditHeroBox setAllStyles={setAllStyles} />
         </DrawerContent>
       </Drawer>
     </Box>

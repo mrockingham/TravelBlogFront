@@ -38,16 +38,30 @@ import 'react-quill/dist/quill.snow.css';
 import WebFont from 'webfontloader';
 
 type Props = {
-  placement?: string;
-  setPlacement?: any;
+  setAllStyles?: any;
 };
 
-const EditTopBarNav = (props: Props) => {
-  const { styleData, getStyles, updateStyles, stylesError } =
-    useEditStylesStore((state: any) => state);
-  const { imageData, getImages, getImage, error } = useImageStore(
-    (state: any) => state
-  );
+const EditHeroBox = (props: Props) => {
+  const {
+    heroBoxData,
+    heroBoxBodyData,
+    updateHeroBoxStyles,
+    updateHeroBoxBodyStyles,
+    getHeroBox,
+    getHeroBoxBody,
+  } = useEditStylesStore((state: any) => state);
+  const { getImages } = useImageStore((state: any) => state);
+  const [photos, setPhotos] = useState([]);
+
+  useEffect(() => {
+    const getAlbumPhotos = async () => {
+      const allAlbums = await getImages();
+      console.log('all photos', allAlbums);
+      setPhotos(allAlbums?.documents);
+    };
+
+    getAlbumPhotos();
+  }, []);
 
   const {
     isOpen: isOpenModal1,
@@ -61,59 +75,73 @@ const EditTopBarNav = (props: Props) => {
   } = useDisclosure();
 
   const [formData, setFormData] = useState({
-    headerText:
-      styleData[0]?.heroBox?.headerText || defaultAppStyles.heroBox.headerText,
-    headerFontStyle:
-      styleData[0]?.heroBox?.headerFontStyle ||
-      defaultAppStyles.heroBox.headerFontStyle,
-    bodyText:
-      styleData[0]?.heroBox?.bodyText || defaultAppStyles.heroBox.bodyText,
-    backgroundImage:
-      styleData[0]?.heroBox?.backgroundImage ||
-      defaultAppStyles?.heroBox.backgroundImage,
-    alignItems:
-      styleData[0]?.heroBox?.headerAlign ||
-      defaultAppStyles.heroBox.headerAlign,
+    headerText: heroBoxData?.headerText
+      ? heroBoxData?.headerText
+      : defaultAppStyles?.heroBox.headerText,
+    headerFontStyle: heroBoxData?.headerFontStyle
+      ? heroBoxData?.headerFontStyle
+      : defaultAppStyles?.heroBox.headerFontStyle,
+    bodyText: heroBoxBodyData?.bodyText
+      ? heroBoxBodyData?.bodyText
+      : defaultAppStyles?.heroBoxBody.bodyText,
+    backgroundImage: heroBoxData?.backgroundImage
+      ? heroBoxData?.backgroundImage
+      : defaultAppStyles?.heroBox.backgroundImage,
+    headerAlign: heroBoxData?.headerAlign
+      ? heroBoxData?.headerAlign
+      : defaultAppStyles?.heroBox.headerAlign,
     selectedImg: '',
-    imgOpacity:
-      styleData[0]?.heroBox?.backGroundImageOpacity ||
-      defaultAppStyles?.heroBox.backgroundImageOpacity,
+    backgroundImageOpacity: heroBoxData?.backgroundImageOpacity
+      ? heroBoxData?.backgroundImageOpacity
+      : defaultAppStyles?.heroBox.backgroundImageOpacity,
     isImgSelected: false,
-    headerTextColor:
-      styleData[0]?.heroBox?.headerTextColor ||
-      defaultAppStyles?.heroBox.backgroundImage,
-    bodyTextColor:
-      styleData[0]?.heroBox?.bodyTextColor ||
-      defaultAppStyles?.heroBox.bodyTextColor,
-    bodyTextSize:
-      styleData[0]?.heroBox?.bodyTextSize ||
-      defaultAppStyles?.heroBox.bodyTextSize,
+    headerTextColor: heroBoxData?.headerTextColor
+      ? heroBoxData?.headerTextColor
+      : defaultAppStyles?.heroBox.headerTextColor,
+    bodyTextColor: heroBoxBodyData?.bodyTextColor
+      ? heroBoxBodyData?.bodyTextColor
+      : defaultAppStyles?.heroBoxBody.bodyTextColor,
+    bodyTextSize: heroBoxBodyData?.bodyText
+      ? heroBoxBodyData?.bodyText
+      : defaultAppStyles?.heroBoxBody.bodyText,
   });
 
   console.log('formData', formData);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateStyles({
-      heroBox: {
-        headerAlign: formData.alignItems,
+    await updateHeroBoxStyles({
+      id: '658f29098268531b0292',
+      data: {
+        headerAlign: formData.headerAlign,
         headerText: formData.headerText,
         headerFontStyle: formData.headerFontStyle,
         headerTextColor: formData.headerTextColor,
         backgroundImage: formData.backgroundImage,
-        backGroundImageOpacity: formData.imgOpacity,
+        backgroundImageOpacity: formData.backgroundImageOpacity,
+      },
+    });
+
+    await updateHeroBoxBodyStyles({
+      id: '658f3baeefca92d22c07',
+      data: {
         bodyText: formData.bodyText,
         bodyTextColor: formData.bodyTextColor,
         bodyTextSize: formData.bodyTextSize,
       },
     });
 
-    getStyles();
+    await getHeroBox();
+    await getHeroBoxBody();
   };
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+    props.setAllStyles(prevState => ({
       ...prevState,
       [name]: value,
     }));
@@ -123,13 +151,21 @@ const EditTopBarNav = (props: Props) => {
       ...prevState,
       headerText: value,
     }));
+    props.setAllStyles(prevState => ({
+      ...prevState,
+      headerText: value,
+    }));
   };
 
   const handleImgOpacityChange = (e: { target: { value: any } }) => {
     const { value } = e.target;
     setFormData(prevState => ({
       ...prevState,
-      imgOpacity: value,
+      backgroundImageOpacity: value,
+    }));
+    props.setAllStyles(prevState => ({
+      ...prevState,
+      backgroundImageOpacity: value,
     }));
   };
 
@@ -139,20 +175,6 @@ const EditTopBarNav = (props: Props) => {
       selectedImg: image,
       isImgSelected: true,
     }));
-  };
-
-  const TextEditor = () => {
-    const [text, setText] = useState('');
-
-    const handleChange = (value: React.SetStateAction<string>) => {
-      setText(value);
-    };
-
-    return (
-      <div>
-        <ReactQuill value={text} onChange={handleChange} />
-      </div>
-    );
   };
 
   const modules = {
@@ -198,9 +220,9 @@ const EditTopBarNav = (props: Props) => {
         <DrawerBody>
           <Text as="b">Align Main Header</Text>
           <RadioGroup
-            defaultValue={formData.alignItems}
+            defaultValue={formData.headerAlign}
             onChange={value =>
-              handleInputChange({ target: { name: 'alignItems', value } })
+              handleInputChange({ target: { name: 'headerAlign', value } })
             }
           >
             <Stack direction="row" mb="4">
@@ -346,15 +368,7 @@ const EditTopBarNav = (props: Props) => {
               </ModalContent>
             </Modal>
           </Box>
-          {/* <Input
-            type="text"
-            id="value1"
-            name="headerText"
-            onChange={handleInputChange}
-            value={formData.headerText}
-            placeholder="Header Text"
-            mb={2}
-          /> */}
+
           <Text as="b">Header Title Color</Text>
           <ChromePicker
             color={formData.headerTextColor}
@@ -424,7 +438,10 @@ const EditTopBarNav = (props: Props) => {
             mb={2}
           />
           <Text as="b">Background Img Opacity</Text>
-          <Select value={formData.imgOpacity} onChange={handleImgOpacityChange}>
+          <Select
+            value={formData.backgroundImageOpacity}
+            onChange={handleImgOpacityChange}
+          >
             <option value="">Select option</option>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(option => (
               <option key={option} value={option}>
@@ -440,20 +457,20 @@ const EditTopBarNav = (props: Props) => {
               <ModalCloseButton />
               <ModalBody>
                 <Wrap justify="center">
-                  {imageData.map((image: { image: string | undefined }) => (
+                  {photos?.map((image: { url: string | undefined }) => (
                     <Box
                       onClick={() => {
-                        selectImg(image?.image || '');
-                        console.log('clicked', image.image);
+                        selectImg(image?.url || '');
+                        console.log('clicked', image.url);
                       }}
                     >
                       <Image
                         boxSize="150px"
                         objectFit="cover"
-                        src={image.image}
+                        src={image.url}
                         alt=""
                         style={
-                          image.image === formData.selectedImg
+                          image.url === formData.selectedImg
                             ? { border: '4px solid blue' }
                             : { border: 'none' }
                         }
@@ -493,4 +510,4 @@ const EditTopBarNav = (props: Props) => {
   );
 };
 
-export default EditTopBarNav;
+export default EditHeroBox;

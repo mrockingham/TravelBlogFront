@@ -1,32 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Box, Center, ChakraProvider, Flex, theme } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
+import React, { useEffect } from 'react';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Box, ChakraProvider, Flex, theme } from '@chakra-ui/react';
 import { useEditStylesStore } from './stores/useEditStylesStore';
-import LandingPage from './Pages/LandingPage/LandingPage';
-import Login from './Components/Login/Login';
-import Register from './Components/Register/Register';
-import TopBar from './Components/TopBar/TopBar';
-import Album from './Pages/Album';
-import { defaultAppStyles } from './config/defaultAppStyles';
 import WebFont from 'webfontloader';
+import LandingPage from './Pages/landingPage/LandingPage';
+import Register from './Pages/Register/Register';
+import Login from './Pages/Login/Login';
+import TopBar from './Components/TopBar/TopBar';
+import { defaultAppStyles } from './config/defaultAppStyles';
+import Album from './Pages/album/Album';
+import Dots from './Photos/backgroundDots.jpg';
+import Grad from './Photos/grad.jpg';
+import Ocean from './Photos/ocean.jpg';
 
-export const App = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-      },
-    },
-  });
-
-  const { styleData, getStyles, createStyle, updateStyles } =
-    useEditStylesStore((state: any) => state);
+const App = () => {
+  const {
+    styleData,
+    getMainStyles,
+    getHeroBoxStyles,
+    getHeroBoxBodyStyles,
+    getMiddleContentBoxBodyStyles,
+    getMiddleContentBoxStyles,
+  } = useEditStylesStore((state: any) => state);
 
   useEffect(() => {
+    const getStyles = async () => {
+      await getMainStyles();
+      await getHeroBoxStyles();
+      await getHeroBoxBodyStyles();
+      await getMiddleContentBoxBodyStyles();
+      await getMiddleContentBoxStyles();
+    };
     getStyles();
-  }, [getStyles, updateStyles]);
+  }, []);
 
   useEffect(() => {
     WebFont.load({
@@ -55,33 +61,41 @@ export const App = () => {
       },
     });
   }, []);
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
+      <BrowserRouter>
         <Box
+          minH={'100vh'}
+          backgroundImage={styleData?.backgroundImage ? Dots : ''}
+          backgroundSize="cover"
+          backgroundPosition="center"
           backgroundColor={
-            styleData[0]?.backgroundColor || defaultAppStyles.backgroundColor
+            styleData?.backgroundColor ||
+            defaultAppStyles.styles.backgroundColor
           }
         >
           <TopBar
             height={300}
             navNames={
-              styleData[0]?.topBarNavLinks || defaultAppStyles.topBarNavLinks
+              styleData?.topBarNavLinks ||
+              defaultAppStyles.styles.topBarNavLinks
             }
           />
+
           <Flex justify={'center'}>
             <Box h={'100%'} w="1200px">
               <Routes>
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/Login" element={<Login />} />
-                <Route path="/Sign-up" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Register />} />
                 <Route path="/Album" element={<Album />} />
               </Routes>
             </Box>
           </Flex>
         </Box>
-      </ChakraProvider>
-    </QueryClientProvider>
+      </BrowserRouter>
+    </ChakraProvider>
   );
 };
+
+export default App;

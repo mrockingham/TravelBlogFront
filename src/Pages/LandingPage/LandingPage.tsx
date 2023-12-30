@@ -1,23 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button } from '@chakra-ui/react';
-import { useUsersStore } from '../../stores/useUsersStore';
+import { Box } from '@chakra-ui/react';
+import React from 'react';
 import HeroBox from '../../Components/HeroBox/HeroBox';
 import MiddleContentBox from '../../Components/MiddleContentBox/MiddleContentBox';
 
-type Props = {};
-
-const LandingPage = (props: Props) => {
-  const { data, getUsers, error } = useUsersStore((state: any) => state);
-  const [isEdit, setIsEdit] = useState(false);
-
-  useEffect(() => {
-    getUsers();
-  }, [getUsers]);
-
-  console.log('data', data);
-
+const LandingPage = () => {
   return (
-    <Box fontSize="xl" w="100%">
+    <Box>
       <HeroBox height={500} />
       <MiddleContentBox />
     </Box>

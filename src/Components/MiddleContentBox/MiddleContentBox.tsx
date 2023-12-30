@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -12,7 +12,7 @@ import {
   Center,
 } from '@chakra-ui/react';
 
-import { useUsersStore } from '../../stores/useUsersStore';
+import { useUserStore } from '../../stores/useUserStore';
 import { EditIcon } from '@chakra-ui/icons';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
@@ -20,24 +20,101 @@ import parse from 'html-react-parser';
 import EditMiddleContentBox from '../EditMiddleContentBox/EditMiddleContentBox';
 
 const MiddleContentBox = () => {
-  const { data, getUsers, error, editMode, isEditMode } = useUsersStore(
+  const { editMode } = useUserStore((state: any) => state);
+  const { middleContentBoxData, middleContentBoxBodyData } = useEditStylesStore(
     (state: any) => state
   );
-  const { styleData, getStyles } = useEditStylesStore((state: any) => state);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [placement, setPlacement] = useState();
+
+  useEffect(() => {
+    setAllStyles({
+      headerText: middleContentBoxData?.headerText
+        ? middleContentBoxData?.headerText
+        : defaultAppStyles.middleContentBox.headerText,
+      headerFontStyle: middleContentBoxData?.headerFontStyle
+        ? middleContentBoxData?.headerFontStyle
+        : defaultAppStyles.middleContentBox.headerFontStyle,
+      bodyText: middleContentBoxBodyData?.bodyText
+        ? middleContentBoxBodyData?.bodyText
+        : defaultAppStyles.middleContentBoxBody.bodyText,
+      backgroundImage1: middleContentBoxData?.backgroundImage1
+        ? middleContentBoxData?.backgroundImage1
+        : defaultAppStyles?.middleContentBox.backgroundImage1,
+      backgroundImage2: middleContentBoxData?.backgroundImage2
+        ? middleContentBoxData?.backgroundImage2
+        : defaultAppStyles?.middleContentBox.backgroundImage2,
+      headerAlign: middleContentBoxData?.headerAlign
+        ? middleContentBoxData?.headerAlign
+        : defaultAppStyles.middleContentBox.headerAlign,
+
+      backgroundImageOpacity: middleContentBoxData?.backgroundImageOpacity
+        ? middleContentBoxData?.backgroundImageOpacity
+        : defaultAppStyles?.middleContentBox.backgroundImageOpacity,
+      isImgSelected: false,
+      headerTextColor: middleContentBoxData?.headerTextColor
+        ? middleContentBoxData?.headerTextColor
+        : defaultAppStyles?.middleContentBox.headerTextColor,
+      bodyTextColor: middleContentBoxBodyData?.bodyTextColor
+        ? middleContentBoxBodyData?.bodyTextColor
+        : defaultAppStyles?.middleContentBoxBody.bodyTextColor,
+      bodyTextSize: middleContentBoxBodyData?.bodyTextColor
+        ? middleContentBoxBodyData?.bodyTextColor
+        : defaultAppStyles?.middleContentBoxBody.bodyTextSize,
+      bodyTextAlign: middleContentBoxBodyData?.bodyTextAlign
+        ? middleContentBoxBodyData?.bodyTextAlign
+        : defaultAppStyles?.middleContentBoxBody.bodyTextAlign,
+    });
+  }, [middleContentBoxData, middleContentBoxBodyData]);
+
+  const [allStyles, setAllStyles] = useState({
+    headerText: middleContentBoxData?.headerText
+      ? middleContentBoxData?.headerText
+      : defaultAppStyles.middleContentBox.headerText,
+    headerFontStyle: middleContentBoxData?.headerFontStyle
+      ? middleContentBoxData?.headerFontStyle
+      : defaultAppStyles.middleContentBox.headerFontStyle,
+    bodyText: middleContentBoxBodyData?.bodyText
+      ? middleContentBoxBodyData?.bodyText
+      : defaultAppStyles.middleContentBoxBody.bodyText,
+    backgroundImage1: middleContentBoxData?.backgroundImage1
+      ? middleContentBoxData?.backgroundImage1
+      : defaultAppStyles?.middleContentBox.backgroundImage1,
+    backgroundImage2: middleContentBoxData?.backgroundImage2
+      ? middleContentBoxData?.backgroundImage2
+      : defaultAppStyles?.middleContentBox.backgroundImage2,
+    headerAlign: middleContentBoxData?.headerAlign
+      ? middleContentBoxData?.headerAlign
+      : defaultAppStyles.middleContentBox.headerAlign,
+
+    backgroundImageOpacity: middleContentBoxData?.backgroundImageOpacity
+      ? middleContentBoxData?.backgroundImageOpacity
+      : defaultAppStyles?.middleContentBox.backgroundImageOpacity,
+    isImgSelected: false,
+    headerTextColor: middleContentBoxData?.headerTextColor
+      ? middleContentBoxData?.headerTextColor
+      : defaultAppStyles?.middleContentBox.headerTextColor,
+    bodyTextColor: middleContentBoxBodyData?.bodyTextColor
+      ? middleContentBoxBodyData?.bodyTextColor
+      : defaultAppStyles?.middleContentBoxBody.bodyTextColor,
+    bodyTextSize: middleContentBoxBodyData?.bodyTextColor
+      ? middleContentBoxBodyData?.bodyTextColor
+      : defaultAppStyles?.middleContentBoxBody.bodyTextSize,
+    bodyTextAlign: middleContentBoxBodyData?.bodyTextAlign
+      ? middleContentBoxBodyData?.bodyTextAlign
+      : defaultAppStyles?.middleContentBoxBody.bodyTextAlign,
+  });
 
   const fontSize = () => {
-    if (styleData[0]?.heroBox?.bodyTextSize === 'sm') {
+    if (middleContentBoxBodyData?.bodyTextColor === 'sm') {
       return { base: '8px', md: '13.33px', lg: '18.67px' };
-    } else if (styleData[0]?.heroBox?.bodyTextSize === 'md') {
+    } else if (middleContentBoxBodyData?.bodyTextColor === 'md') {
       return { base: '16px', md: '26.67px', lg: '37.33px' };
-    } else if (styleData[0]?.heroBox?.bodyTextSize === 'lg') {
+    } else if (middleContentBoxBodyData?.bodyTextColor === 'lg') {
       return { base: '24px', md: '40px', lg: '56px' };
     }
   };
   return (
-    <Box>
+    <Box pb={2}>
       {editMode && (
         <Flex justifyContent={'center'}>
           <EditIcon
@@ -47,32 +124,18 @@ const MiddleContentBox = () => {
           />
         </Flex>
       )}
-      <Flex
-        justifyContent={
-          styleData[0]?.MiddleContentBox?.headerAlign ||
-          defaultAppStyles?.MiddleContentBox.headerAlign
-        }
-      >
+      <Flex justifyContent={allStyles.headerAlign}>
         {/* Header Text */}
         <Text
-          color={
-            styleData[0]?.MiddleContentBox?.headerTextColor ||
-            defaultAppStyles?.MiddleContentBox.headerTextColor
-          }
+          color={allStyles.headerTextColor}
           fontSize={{ base: '24px', md: '40px', lg: '56px' }}
           fontWeight={'bold'}
           style={{
-            fontFamily: `${
-              styleData[0]?.MiddleContentBox?.headerFontStyle ||
-              defaultAppStyles?.MiddleContentBox.headerFontStyle
-            }`,
+            fontFamily: `${allStyles.headerFontStyle}`,
           }}
         >
-          {(parse(
-            styleData[0]?.MiddleContentBox?.headerText ||
-              defaultAppStyles?.MiddleContentBox.headerText
-          ) as string) ||
-            defaultAppStyles?.MiddleContentBox.headerText ||
+          {(parse(allStyles.headerText) as string) ||
+            defaultAppStyles?.middleContentBox.headerText ||
             ''}
         </Text>
       </Flex>
@@ -80,30 +143,16 @@ const MiddleContentBox = () => {
       <Flex
         mt={10}
         // pt={}
-        justifyContent={
-          styleData[0]?.MiddleContentBox?.bodyTextAlign ||
-          defaultAppStyles?.MiddleContentBox.bodyTextAlign
-        }
+        justifyContent={allStyles.bodyTextAlign}
       >
         <Text
-          color={
-            styleData[0]?.MiddleContentBox?.bodyTextColor ||
-            defaultAppStyles?.MiddleContentBox.bodyTextColor
-          }
+          color={allStyles.bodyTextColor}
           fontSize={
-            fontSize() || defaultAppStyles?.MiddleContentBox.bodyTextSize
+            fontSize() || defaultAppStyles?.middleContentBoxBody.bodyTextSize
           }
           fontWeight={'bold'}
         >
-          {
-            parse(
-              styleData[0]?.MiddleContentBox?.bodyText ||
-                defaultAppStyles?.MiddleContentBox.bodyText
-            ) as string
-          }
-          {/* {
-          styleData[0]?.MiddleContentBox?.bodyText ||
-            defaultAppStyles?.MiddleContentBox.bodyText} */}
+          {parse(allStyles.bodyText) as string}
         </Text>
       </Flex>
 
@@ -112,17 +161,8 @@ const MiddleContentBox = () => {
           <Image
             h={{ base: '200px', md: '400px', lg: '500px' }}
             w={{ base: '200px', md: '400px', lg: '500px' }}
-            // onClick={() => {
-            //   setImage(image.image);
-            //   onOpen();
-            // }}
-            // key={image.name}
-            //   boxSize="150px"
             objectFit="cover"
-            src={
-              styleData[0]?.MiddleContentBox?.backgroundImage1 ||
-              defaultAppStyles?.MiddleContentBox.backgroundImage1
-            }
+            src={allStyles.backgroundImage1}
             alt=""
           />
         </Box>
@@ -130,18 +170,8 @@ const MiddleContentBox = () => {
           <Image
             h={{ base: '200px', md: '400px', lg: '500px' }}
             w={{ base: '200px', md: '400px', lg: '500px' }}
-            // onClick={() => {
-            //   setImage(image.image);
-            //   onOpen();
-            // }}
-            // key={image.name}
-            //   boxSize="150px"
-            //   boxSize={{ base: '100px', md: '150px', lg: '200px' }}
             objectFit="cover"
-            src={
-              styleData[0]?.MiddleContentBox?.backgroundImage2 ||
-              defaultAppStyles?.MiddleContentBox.backgroundImage2
-            }
+            src={allStyles.backgroundImage2}
             alt=""
           />
         </Box>
@@ -150,10 +180,7 @@ const MiddleContentBox = () => {
       <Drawer placement={'bottom'} onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent overflow={'auto'} h="300px">
-          <EditMiddleContentBox
-            placement={placement}
-            setPlacement={setPlacement}
-          />
+          <EditMiddleContentBox setAllStyles={setAllStyles} />
         </DrawerContent>
       </Drawer>
     </Box>

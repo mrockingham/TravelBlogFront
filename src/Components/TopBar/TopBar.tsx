@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useUsersStore } from '../../stores/useUsersStore';
+import React, { useEffect } from 'react';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
+import { useUserStore } from '../../stores/useUserStore';
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
 import {
   Box,
-  Link,
   Flex,
   Text,
   Drawer,
@@ -11,10 +11,15 @@ import {
   DrawerContent,
   useDisclosure,
   Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
-import EditTopBarNav from '../EditComponents/EditTopBarNav';
+import { ChevronDownIcon, EditIcon } from '@chakra-ui/icons';
+import EditTopBarNav from '../Edit/editTopBar/editTopBar';
 import { defaultAppStyles } from '../../config/defaultAppStyles';
+import { signOutAccount } from '../../config/api';
 
 type Props = {
   height?: number | string;
@@ -24,28 +29,34 @@ type Props = {
 };
 
 const TopBar = (props: Props) => {
-  const { data, getUsers, error, editMode, isEditMode } = useUsersStore(
+  const { data, editMode, isEditMode, getUsers, signOutUser } = useUserStore(
     (state: any) => state
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [placement, setPlacement] = React.useState();
   // const [isEdit, setIsEditMode] = useState(false);
-  const { styleData, getStyles, updateStyles, stylesError } =
-    useEditStylesStore((state: any) => state);
+  const { styleData } = useEditStylesStore((state: any) => state);
 
+  useEffect(() => {
+    if (!data.name) {
+      getUsers();
+    }
+  }, []);
+
+  console.log('the data', data);
   return (
     <Box borderBottom={'1px'}>
       <Flex
         // justifyContent={'center'}
         justifyContent={
-          styleData[0]?.topBarNavAlign || defaultAppStyles.topBarNavAlign
+          styleData?.topBarNavAlign || defaultAppStyles.styles.topBarNavAlign
         }
         w="100%"
       >
         <Flex mr="5px" ml="5px">
           {props.navNames?.map((navName, index) => (
             <Box key={index}>
-              <Link href={navName === 'Home' ? '/' : navName}>
+              <Link to={navName === 'Home' ? '/' : navName}>
                 <Text ml="15px" fontSize="4xl">
                   {navName}
                 </Text>
@@ -55,7 +66,7 @@ const TopBar = (props: Props) => {
         </Flex>
       </Flex>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
-        {data.name && (
+        {data?.name && (
           <Button
             size="xs"
             variant="outline"
@@ -65,7 +76,24 @@ const TopBar = (props: Props) => {
             Edit Mode {editMode ? 'on' : 'off'}
           </Button>
         )}
-        <Box mr={'60px'}>{data ? data?.name : ''} </Box>
+        <Box mr={'60px'}>
+          {data?.name ? (
+            <Menu>
+              <MenuButton
+                variant="ghost"
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+              >
+                {data?.name}
+              </MenuButton>
+              <MenuList onClick={() => signOutUser()}>
+                <MenuItem>Logout</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            ''
+          )}{' '}
+        </Box>
         {editMode && (
           <EditIcon
             onClick={() => {

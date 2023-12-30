@@ -10,7 +10,6 @@ import {
   FormLabel,
   DrawerFooter,
   Button,
-  background,
 } from '@chakra-ui/react';
 import { useEditStylesStore } from '../../stores/useEditStylesStore';
 import { ChromePicker } from 'react-color';
@@ -31,8 +30,9 @@ type FormData = {
 };
 
 const EditTopBarNav = (props: Props) => {
-  const { styleData, getStyles, updateStyles, stylesError } =
-    useEditStylesStore((state: any) => state);
+  const { styleData, getStyles, updateStyles } = useEditStylesStore(
+    (state: any) => state
+  );
   const { register, handleSubmit, setValue, getValues } = useForm<FormData>({
     defaultValues: {
       link1: styleData[0]?.topBarNavLinks[0] || 'Link1',
@@ -40,19 +40,20 @@ const EditTopBarNav = (props: Props) => {
       link3: styleData[0]?.topBarNavLinks[2] || 'Link3',
       alignItems: '',
       backgroundColor:
-        styleData[0]?.backgroundColor || defaultAppStyles?.backgroundColor,
+        styleData[0]?.backgroundColor ||
+        defaultAppStyles?.styles?.backgroundColor,
     },
   });
 
   const values = getValues();
 
   console.log('the values', values);
-  const onSubmit = (data: FormData) => {
-    updateStyles({
-      topBarNavAlign: data.alignItems,
-      topBarNavLinks: [data.link1, data.link2, data.link3],
-      backgroundColor: data.backgroundColor,
-    });
+  const onSubmit = () => {
+    // updateStyles({
+    //   topBarNavAlign: data.alignItems,
+    //   topBarNavLinks: [data.link1, data.link2, data.link3],
+    //   backgroundColor: data.backgroundColor,
+    // });
 
     getStyles();
   };

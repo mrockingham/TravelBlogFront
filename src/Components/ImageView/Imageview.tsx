@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useImageStore } from '../../stores/useImageStore';
-import { useUsersStore } from '../../stores/useUsersStore';
+import { useUserStore } from '../../stores/useUserStore';
 import {
   Stack,
   Image,
@@ -29,7 +29,7 @@ type Props = {};
 const Imageview = (props: Props) => {
   const { imageData, getImages, addImageDescription, isLoading } =
     useImageStore((state: any) => state);
-  const { data, getUsers, editMode, isEditMode } = useUsersStore(
+  const { data, getUsers, editMode, isEditMode } = useUserStore(
     (state: any) => state
   );
   const [image, setImage] = useState<string | undefined>('');

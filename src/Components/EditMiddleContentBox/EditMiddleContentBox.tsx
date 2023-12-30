@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   DrawerBody,
@@ -36,14 +36,30 @@ import ReactQuill from 'react-quill';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 type Props = {
-  placement?: string;
-  setPlacement?: any;
+  setAllStyles?: any;
 };
 
 const EditMiddleContentBox = (props: Props) => {
-  const { styleData, getStyles, updateStyles, stylesError } =
-    useEditStylesStore((state: any) => state);
-  const { imageData, getImages } = useImageStore((state: any) => state);
+  const {
+    middleContentBoxData,
+    middleContentBoxBodyData,
+    updateMiddleContentBoxStyles,
+    updateMiddleContentBoxBodyStyles,
+    getMiddleContentBox,
+    getMiddlecontentBodyBox,
+  } = useEditStylesStore((state: any) => state);
+  const { getImages } = useImageStore((state: any) => state);
+  const [photos, setPhotos] = useState([]);
+
+  useEffect(() => {
+    const getAlbumPhotos = async () => {
+      const allAlbums = await getImages();
+      console.log('all photos', allAlbums);
+      setPhotos(allAlbums?.documents);
+    };
+
+    getAlbumPhotos();
+  }, []);
 
   const {
     isOpen: isOpenModal1,
@@ -62,66 +78,79 @@ const EditMiddleContentBox = (props: Props) => {
   } = useDisclosure();
 
   const [formData, setFormData] = useState({
-    headerText:
-      styleData[0]?.MiddleContentBox?.headerText ||
-      defaultAppStyles.MiddleContentBox.headerText,
-    headerFontStyle:
-      styleData[0]?.MiddleContentBox?.headerFontStyle ||
-      defaultAppStyles.MiddleContentBox.headerFontStyle,
-    bodyText:
-      styleData[0]?.MiddleContentBox?.bodyText ||
-      defaultAppStyles.MiddleContentBox.bodyText,
-    backgroundImage1:
-      styleData[0]?.MiddleContentBox?.backgroundImage1 ||
-      defaultAppStyles?.MiddleContentBox.backgroundImage1,
-    backgroundImage2:
-      styleData[0]?.MiddleContentBox?.backgroundImage2 ||
-      defaultAppStyles?.MiddleContentBox.backgroundImage2,
-    alignItems:
-      styleData[0]?.MiddleContentBox?.headerAlign ||
-      defaultAppStyles.MiddleContentBox.headerAlign,
+    headerText: middleContentBoxData?.headerText
+      ? middleContentBoxData?.headerText
+      : defaultAppStyles.middleContentBox.headerText,
+    headerFontStyle: middleContentBoxData?.headerFontStyle
+      ? middleContentBoxData?.headerFontStyle
+      : defaultAppStyles.middleContentBox.headerFontStyle,
+    bodyText: middleContentBoxBodyData?.bodyText
+      ? middleContentBoxBodyData?.bodyText
+      : defaultAppStyles.middleContentBoxBody.bodyText,
+    backgroundImage1: middleContentBoxData?.backgroundImage1
+      ? middleContentBoxData?.backgroundImage1
+      : defaultAppStyles?.middleContentBox.backgroundImage1,
+    backgroundImage2: middleContentBoxData?.backgroundImage2
+      ? middleContentBoxData?.backgroundImage2
+      : defaultAppStyles?.middleContentBox.backgroundImage2,
+    headerAlign: middleContentBoxData?.headerAlign
+      ? middleContentBoxData?.headerAlign
+      : defaultAppStyles.middleContentBox.headerAlign,
     selectedImg1: '',
     selectedImg2: '',
-    imgOpacity:
-      styleData[0]?.heroBox?.backGroundImageOpacity ||
-      defaultAppStyles?.heroBox.backgroundImageOpacity,
+
+    backgroundImageOpacity: middleContentBoxData?.backgroundImageOpacity
+      ? middleContentBoxData?.backgroundImageOpacity
+      : defaultAppStyles?.middleContentBox.backgroundImageOpacity,
     isImgSelected: false,
-    headerTextColor:
-      styleData[0]?.MiddleContentBox?.headerTextColor ||
-      defaultAppStyles?.MiddleContentBox.headerTextColor,
-    bodyTextColor:
-      styleData[0]?.MiddleContentBox?.bodyTextColor ||
-      defaultAppStyles?.MiddleContentBox.bodyTextColor,
-    bodyTextSize:
-      styleData[0]?.MiddleContentBox?.bodyTextSize ||
-      defaultAppStyles?.MiddleContentBox.bodyTextSize,
+    headerTextColor: middleContentBoxData?.headerTextColor
+      ? middleContentBoxData?.headerTextColor
+      : defaultAppStyles?.middleContentBox.headerTextColor,
+    bodyTextColor: middleContentBoxBodyData?.bodyTextColor
+      ? middleContentBoxBodyData?.bodyTextColor
+      : defaultAppStyles?.middleContentBoxBody.bodyTextColor,
+    bodyTextSize: middleContentBoxBodyData?.bodyTextColor
+      ? middleContentBoxBodyData?.bodyTextColor
+      : defaultAppStyles?.middleContentBoxBody.bodyTextSize,
   });
 
   console.log('formData', formData);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateStyles({
-      MiddleContentBox: {
-        headerAlign: formData.alignItems,
+    await updateMiddleContentBoxStyles({
+      id: '658f5a697ee640d92021',
+      data: {
+        headerAlign: formData.headerAlign,
         headerText: formData.headerText,
         headerFontStyle: formData.headerFontStyle,
         headerTextColor: formData.headerTextColor,
         backgroundImage1: formData.backgroundImage1,
         backgroundImage2: formData.backgroundImage2,
-        backGroundImageOpacity: formData.imgOpacity,
+        backgroundImageOpacity: formData.backgroundImageOpacity,
+      },
+    });
+    updateMiddleContentBoxBodyStyles({
+      id: '658f5ab4b339c2173b17',
+      data: {
         bodyText: formData.bodyText,
         bodyTextColor: formData.bodyTextColor,
         bodyTextSize: formData.bodyTextSize,
+        bodySpaceTop: 0,
       },
     });
 
-    getStyles();
+    getMiddleContentBox();
+    getMiddlecontentBodyBox();
   };
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+    props.setAllStyles(prevState => ({
       ...prevState,
       [name]: value,
     }));
@@ -132,15 +161,24 @@ const EditMiddleContentBox = (props: Props) => {
       ...prevState,
       headerText: value,
     }));
+    props.setAllStyles(prevState => ({
+      ...prevState,
+      headerText: value,
+    }));
   };
   const handleBodyTextChange = (value: React.SetStateAction<string>) => {
     setFormData(prevState => ({
       ...prevState,
       bodyText: value,
     }));
+    props.setAllStyles(prevState => ({
+      ...prevState,
+      bodyText: value,
+    }));
   };
 
   const selectImg = (image: string, imgNumber: number) => {
+    console.log('image', image, imgNumber);
     if (imgNumber === 1) {
       setFormData(prevState => ({
         ...prevState,
@@ -173,28 +211,29 @@ const EditMiddleContentBox = (props: Props) => {
     'list',
     'bullet',
   ];
+
   return (
     <div>
       <form onSubmit={onSubmit}>
         <DrawerHeader borderBottomWidth="1px">
           Edit Middle Content Box
           {/* <Text>Edit Location</Text>
-          <RadioGroup
-            defaultValue={props.placement}
-            onChange={() => props.setPlacement}
-          >
-            <Stack direction="row" mb="4">
-              <Radio value="top">Top</Radio>
-              <Radio value="bottom">Bottom</Radio>
-            </Stack>
-          </RadioGroup> */}
+              <RadioGroup
+                defaultValue={props.placement}
+                onChange={() => props.setPlacement}
+              >
+                <Stack direction="row" mb="4">
+                  <Radio value="top">Top</Radio>
+                  <Radio value="bottom">Bottom</Radio>
+                </Stack>
+              </RadioGroup> */}
         </DrawerHeader>
         <DrawerBody>
           <Text as="b">Align Middle Content Header</Text>
           <RadioGroup
-            defaultValue={formData.alignItems}
+            defaultValue={formData.headerAlign}
             onChange={value =>
-              handleInputChange({ target: { name: 'alignItems', value } })
+              handleInputChange({ target: { name: 'headerAlign', value } })
             }
           >
             <Stack direction="row" mb="4">
@@ -341,14 +380,14 @@ const EditMiddleContentBox = (props: Props) => {
             </Modal>
           </Box>
           {/* <Input
-            type="text"
-            id="value1"
-            name="headerText"
-            onChange={handleInputChange}
-            value={formData.headerText}
-            placeholder="Header Text"
-            mb={2}
-          /> */}
+                type="text"
+                id="value1"
+                name="headerText"
+                onChange={handleInputChange}
+                value={formData.headerText}
+                placeholder="Header Text"
+                mb={2}
+              /> */}
           <Text as="b">Middle Content Header Title Color</Text>
           <ChromePicker
             color={formData.headerTextColor}
@@ -422,20 +461,20 @@ const EditMiddleContentBox = (props: Props) => {
               <ModalCloseButton />
               <ModalBody>
                 <Wrap justify="center">
-                  {imageData.map((image: { image: string | undefined }) => (
+                  {photos?.map((image: { url: string | undefined }) => (
                     <Box
                       onClick={() => {
-                        selectImg(image?.image || '', 1);
-                        console.log('clicked', image.image);
+                        selectImg(image?.url || '', 1);
+                        console.log('clicked', image.url);
                       }}
                     >
                       <Image
                         boxSize="150px"
                         objectFit="cover"
-                        src={image.image}
+                        src={image.url}
                         alt=""
                         style={
-                          image.image === formData.selectedImg1
+                          image.url === formData.selectedImg1
                             ? { border: '4px solid blue' }
                             : { border: 'none' }
                         }
@@ -494,20 +533,20 @@ const EditMiddleContentBox = (props: Props) => {
               <ModalCloseButton />
               <ModalBody>
                 <Wrap justify="center">
-                  {imageData.map((image: { image: string | undefined }) => (
+                  {photos?.map((image: { url: string | undefined }) => (
                     <Box
                       onClick={() => {
-                        selectImg(image?.image || '', 2);
-                        console.log('clicked', image.image);
+                        selectImg(image?.url || '', 2);
+                        console.log('clicked', image.url);
                       }}
                     >
                       <Image
                         boxSize="150px"
                         objectFit="cover"
-                        src={image.image}
+                        src={image.url}
                         alt=""
                         style={
-                          image.image === formData.selectedImg2
+                          image.url === formData.selectedImg2
                             ? { border: '4px solid blue' }
                             : { border: 'none' }
                         }
