@@ -15,6 +15,7 @@ import {
   Input,
   useToast,
   Button,
+  Spinner,
 } from '@chakra-ui/react';
 import { useForm, Resolver } from 'react-hook-form';
 import { DevTool } from '@hookform/devtools';
@@ -58,8 +59,13 @@ const RegisterComponent = () => {
   });
 
   const onSubmit = handleSubmit(async data => {
-    if (regPin === process.env.REACT_APP_REGISTER) {
-      await createUserAccount(data);
+    try {
+      if (regPin === process.env.REACT_APP_REGISTER) {
+        await createUserAccount(data);
+        navigate('/');
+      }
+    } catch (err) {
+      console.log(err);
     }
   });
 

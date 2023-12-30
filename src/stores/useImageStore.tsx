@@ -19,11 +19,13 @@ type ImageData = {
 
 export const useImageStore = create(set => ({
   imageData: [],
+  imageResponse: [],
+
   getImages: async () => {
     try {
       set({ isLoading: true });
       const response = await getAllPhotos();
-      set({ isLoading: false, imageData: response });
+      set({ isLoading: false, imageData: response?.documents });
       return response;
     } catch (err: any) {
       set({ imageError: err.message, isLoading: false });
@@ -33,7 +35,7 @@ export const useImageStore = create(set => ({
     try {
       set({ isLoading: true });
       const response = await getPhoto(id);
-      set({ isLoading: false, imageData: response });
+      set({ isLoading: false, imageResponse: response });
       return response;
     } catch (err: any) {
       set({ imageError: err.message, isLoading: false });
@@ -49,9 +51,10 @@ export const useImageStore = create(set => ({
   },
   updateDescription: async (id: string, description: string) => {
     try {
+      set({ isLoading: true });
       const response = await updatePhoto(id, description);
 
-      set({ imageData: response });
+      set({ isLoading: false, imageResponse: response });
       return response;
     } catch (err: any) {
       set({ imageError: err.message });
@@ -59,17 +62,20 @@ export const useImageStore = create(set => ({
   },
   deleteFile: async (id: string) => {
     try {
+      set({ isLoading: true });
       await deletePhoto(id);
-      set({ imageData: [] });
+
+      set({ isLoading: false, imageData: [] });
     } catch (err: any) {
       set({ imageError: err.message, isLoading: false });
     }
   },
   addFile: async (file: File) => {
     try {
+      set({ isLoading: true });
       const response = await uploadFile(file);
+      set({ isLoading: false, imageResponse: response });
 
-      set({ imageData: response });
       return response;
     } catch (err) {
       console.log(err);
@@ -77,9 +83,9 @@ export const useImageStore = create(set => ({
   },
   saveUrl: async (url: any) => {
     try {
-      console.log('the url', url);
+      set({ isLoading: true });
       const response = await savePhotoUrl(url);
-
+      set({ isLoading: false, imageResponse: response });
       return response;
     } catch (err) {
       console.log(err);

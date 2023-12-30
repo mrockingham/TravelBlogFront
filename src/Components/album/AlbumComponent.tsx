@@ -28,19 +28,23 @@ import { EditIcon } from '@chakra-ui/icons';
 
 const AlbumComponent = () => {
   const { editMode } = useUserStore((state: any) => state);
-  const { getImages } = useImageStore((state: any) => state);
+  const { getImages, imageData } = useImageStore((state: any) => state);
   const [photos, setPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getAlbumPhotos = async () => {
       const allAlbums = await getImages();
-      console.log('all photos', allAlbums);
+
       setPhotos(allAlbums?.documents);
     };
 
     getAlbumPhotos();
   }, []);
+
+  useEffect(() => {
+    setPhotos(imageData);
+  }, [imageData]);
 
   const [image, setImage] = useState<string | undefined>('');
 
@@ -57,7 +61,6 @@ const AlbumComponent = () => {
     onClose: onCloseModal2,
   } = useDisclosure();
 
-  console.log('all photos', photos);
   return (
     <Box pb={2}>
       <Center>
