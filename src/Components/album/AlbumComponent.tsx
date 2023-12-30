@@ -72,30 +72,26 @@ const AlbumComponent = () => {
             {photos?.map(
               (image: { url: string | undefined; $collectionId: string }) => (
                 <Box key={image.$collectionId}>
-                  <Skeleton isLoaded={imageLoaded}>
-                    {editMode && (
-                      <EditIcon
-                        onClick={() => {
-                          setId(image.$collectionId);
-                          onOpenModal1();
-                        }}
-                      />
-                    )}
-                    <Image
+                  {editMode && (
+                    <EditIcon
                       onClick={() => {
-                        setImage(image.url);
-                        onOpenModal2();
+                        setId(image.$collectionId);
+                        onOpenModal1();
                       }}
-                      // key={image.name}
-                      h={{ base: '200px', md: '400px', lg: '500px' }}
-                      w={{ base: '200px', md: '400px', lg: '500px' }}
-                      objectFit="cover"
-                      src={image.url}
-                      alt=""
-                      onLoad={() => setImageLoaded(true)}
-                      style={{ display: imageLoaded ? 'block' : 'none' }}
                     />
-                  </Skeleton>
+                  )}
+                  <Image
+                    onClick={() => {
+                      setImage(image.url);
+                      onOpenModal2();
+                    }}
+                    // key={image.name}
+                    h={{ base: '200px', md: '400px', lg: '500px' }}
+                    w={{ base: '200px', md: '400px', lg: '500px' }}
+                    objectFit="cover"
+                    src={image.url}
+                    alt=""
+                  />
                 </Box>
               )
             )}
