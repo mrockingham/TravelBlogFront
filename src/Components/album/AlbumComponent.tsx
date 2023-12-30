@@ -47,6 +47,7 @@ const AlbumComponent = () => {
   }, [imageData]);
 
   const [image, setImage] = useState<string | undefined>('');
+  const [imageLoaded, setImageLoaded] = React.useState(false);
 
   const [description, setDescription] = useState('');
   const [id, setId] = useState('');
@@ -70,8 +71,8 @@ const AlbumComponent = () => {
           <Wrap flexWrap="wrap" justify="center">
             {photos?.map(
               (image: { url: string | undefined; $collectionId: string }) => (
-                <Box>
-                  <Skeleton key={image.$collectionId} isLoaded={!isLoading}>
+                <Box key={image.$collectionId}>
+                  <Skeleton isLoaded={imageLoaded}>
                     {editMode && (
                       <EditIcon
                         onClick={() => {
@@ -91,6 +92,8 @@ const AlbumComponent = () => {
                       objectFit="cover"
                       src={image.url}
                       alt=""
+                      onLoad={() => setImageLoaded(true)}
+                      style={{ display: imageLoaded ? 'block' : 'none' }}
                     />
                   </Skeleton>
                 </Box>
@@ -132,12 +135,7 @@ const AlbumComponent = () => {
         <ModalContent>
           <ModalCloseButton />
           <ModalBody>
-            <Image
-              // key={image.name}
-
-              src={image}
-              alt=""
-            />
+            <Image src={image} alt="" />
           </ModalBody>
 
           <ModalFooter>
